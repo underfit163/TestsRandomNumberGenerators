@@ -20,4 +20,20 @@ Automated system for testing the quality of random and pseudo-random number gene
 В итоге всё это позволило нам разработать эффективную и универсальную систему, которая выявляет отклонения генерируемых последовательностей от случайности, если таковы имеются и дает общую оценку о свойствах исследуемых генераторов.
 
 ## Интерфейс пользователя
+![image](https://user-images.githubusercontent.com/81982349/131507561-d1d66cbb-78f1-4cc7-adf2-d714e56086b1.png)
 
+![image](https://user-images.githubusercontent.com/81982349/131507619-6ea19764-1546-4fb0-a427-65bd33179413.png)
+
+![image](https://user-images.githubusercontent.com/81982349/131507644-02dadb02-13f5-4faa-b8b9-8c07d3f4d102.png)
+
+![image](https://user-images.githubusercontent.com/81982349/131507571-5f1459b0-59a6-403a-812c-516388cc019e.png)
+
+![image](https://user-images.githubusercontent.com/81982349/131507658-e72b3130-cf88-4f96-9399-b97a0e575566.png)
+
+![image](https://user-images.githubusercontent.com/81982349/131507700-77d44866-edef-4518-ac1d-79e5d8c2c7c2.png)
+
+![image](https://user-images.githubusercontent.com/81982349/131507724-0515b7a2-823e-43a0-9a05-b5f0b0bae918.png)
+
+![image](https://user-images.githubusercontent.com/81982349/131507754-b97153ad-48a1-4532-8842-8ecf861294b0.png)
+
+![image](https://user-images.githubusercontent.com/81982349/131507766-d4565c30-1db8-406a-b837-612598e193d1.png)
