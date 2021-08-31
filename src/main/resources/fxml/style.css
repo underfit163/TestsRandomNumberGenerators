@@ -1,0 +1,9 @@
+.tab-pane{
+    -fx-background-color: rgba(122, 144, 255, 0.4);
+}
+#grafAnchorPane{
+    -fx-background-color: rgb(0, 0, 0);
+}
+#grafDopAnchorPane{
+    -fx-background-color: rgb(0, 0, 0);
+}

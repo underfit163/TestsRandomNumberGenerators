@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.StackedBarChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="623.0" prefWidth="790.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="forms.TestGenController">
+  <tabs>
+    <Tab fx:id="mainTab" text="Ввод параметров">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="581.0" prefWidth="772.0">
+               <children>
+                  <ComboBox fx:id="loadComboBox" layoutX="254.0" layoutY="12.0" onAction="#loadComboBoxHandler" prefHeight="29.0" promptText="Выберите способ..." />
+                  <Label fx:id="loadLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="15.0" prefHeight="22.0" prefWidth="210.0" text="Способ загрузки случайных чисел:" textAlignment="JUSTIFY">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="genLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="16.0" layoutY="59.0" text="Генератор случайных чисел:" textAlignment="JUSTIFY">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="genNumComboBox" layoutX="254.0" layoutY="52.0" prefHeight="29.0" promptText="Выберите генератор..." />
+                  <Label fx:id="sizeLabel" layoutX="17.0" layoutY="180.0" text="Объем выборки:">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="initNumLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="16.0" layoutY="99.0" text="Способ ввода числа инициализации:" textAlignment="JUSTIFY">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="initNumComboBox" layoutX="254.0" layoutY="92.0" onAction="#initNumComboBoxHandler" prefHeight="29.0" promptText="Выберите способ..." />
+                  <Spinner fx:id="capacityNumSpinner" layoutX="254.0" layoutY="138.0" prefHeight="26.0" prefWidth="102.0" />
+                  <Label fx:id="capacityLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="17.0" layoutY="143.0" text="Разрядность генерируемых чисел:" textAlignment="JUSTIFY">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Spinner fx:id="initNumberSpinner" editable="true" layoutX="535.0" layoutY="138.0" prefHeight="26.0" prefWidth="239.0" />
+                  <Label fx:id="numberSamplesLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="17.0" layoutY="217.0" prefHeight="16.0" prefWidth="130.0" text="Количество выборок:" textAlignment="JUSTIFY">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Spinner fx:id="sizeSampleSpinner" editable="true" layoutX="254.0" layoutY="175.0" prefHeight="26.0" prefWidth="102.0" />
+                  <Label fx:id="initNumberLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="386.0" layoutY="143.0" text="Число инициализации:" textAlignment="JUSTIFY">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Spinner fx:id="numberSamplesSpinner" editable="true" layoutX="254.0" layoutY="212.0" prefHeight="26.0" prefWidth="102.0" />
+                  <Separator layoutX="3.0" layoutY="128.0" prefHeight="5.0" prefWidth="784.0" />
+                  <TextField fx:id="fileTextField" editable="false" layoutX="486.0" layoutY="13.0" prefHeight="26.0" prefWidth="292.0" promptText="Путь к файлу...">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </TextField>
+                  <ButtonBar layoutX="466.0" layoutY="45.0" prefHeight="60.0" prefWidth="311.0">
+                    <buttons>
+                      <Button fx:id="chooseButton" mnemonicParsing="false" onAction="#chooseButtonHandler" prefHeight="39.0" prefWidth="174.0" text="Выбрать">
+                           <font>
+                              <Font name="Times New Roman" size="14.0" />
+                           </font></Button>
+                    </buttons>
+                  </ButtonBar>
+                  <ListView fx:id="randListView" layoutX="10.0" layoutY="307.0" prefHeight="282.0" prefWidth="771.0" />
+                  <Label fx:id="infoLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="14.0" layoutY="288.0" text="Сгенерированные случайные числа:" textAlignment="JUSTIFY">
+                     <font>
+                        <Font name="Times New Roman Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  <ButtonBar layoutX="383.0" layoutY="223.0" prefHeight="62.0" prefWidth="396.0">
+                    <buttons>
+                        <Button fx:id="mainButton" mnemonicParsing="false" onAction="#mainButtonHandler" prefHeight="42.0" prefWidth="182.0" text="Загрузить СЧ">
+                           <font>
+                              <Font name="Times New Roman Bold" size="18.0" />
+                           </font>
+                        </Button>
+                      <Button fx:id="testButton" mnemonicParsing="false" onAction="#testButtonHandler" prefHeight="42.0" text="Запустить тесты">
+                           <font>
+                              <Font name="Times New Roman Bold" size="18.0" />
+                           </font>
+                        </Button>
+                    </buttons>
+                  </ButtonBar>
+                  <CheckBox fx:id="loadCheckBox" layoutX="403.0" layoutY="200.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="355.0" text="Загрузить СЧ в файл &quot;testSample.txt&quot; на рабочем столе">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label fx:id="aLabel" alignment="CENTER" contentDisplay="CENTER" disable="true" layoutX="17.0" layoutY="254.0" prefHeight="16.0" prefWidth="173.0" text="Уровень значимости тестов:" textAlignment="JUSTIFY">
+                     <font>
+                        <Font name="Times New Roman" size="14.0" />
+                     </font>
+                  </Label>
+                  <Spinner fx:id="aSpinner" disable="true" editable="true" layoutX="254.0" layoutY="249.0" prefHeight="26.0" prefWidth="102.0" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab fx:id="resTab" disable="true" text="Результаты тестов">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <TextArea fx:id="resTextArea" editable="false" layoutX="8.0" layoutY="100.0" prefHeight="410.0" prefWidth="774.0" wrapText="true">
+                     <font>
+                        <Font name="Times New Roman" size="18.0" />
+                     </font>
+                  </TextArea>
+                  <ButtonBar layoutX="477.0" layoutY="509.0" prefHeight="71.0" prefWidth="290.0">
+                    <buttons>
+                      <Button fx:id="saveFileButton" mnemonicParsing="false" onAction="#saveFileButtonHandler" prefHeight="39.0" prefWidth="174.0" text="Сохранить в файл" />
+                    </buttons>
+                  </ButtonBar>
+                  <Label fx:id="resLabel" layoutX="14.0" layoutY="14.0" text="Label">
+                     <font>
+                        <Font name="Times New Roman Bold" size="29.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="resProcLabel" layoutX="14.0" layoutY="48.0" text="Label">
+                     <font>
+                        <Font name="Times New Roman Bold" size="29.0" />
+                     </font>
+                  </Label>
+               </children></AnchorPane>
+      </content>
+    </Tab>
+      <Tab fx:id="graphicTab" disable="true" text="Графический тест">
+        <content>
+          <AnchorPane fx:id="grafAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Canvas fx:id="graphTestCanvas" height="512.0" layoutX="139.0" layoutY="42.0" width="512.0" />
+               </children>
+            </AnchorPane>
+        </content>
+      </Tab>
+      <Tab fx:id="graphicDopTab" disable="true" text="Дополнение к графическому тесту">
+        <content>
+          <AnchorPane fx:id="grafDopAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Canvas fx:id="graphDopTestCanvas" height="512.0" layoutX="139.0" layoutY="42.0" width="512.0" />
+               </children>
+            </AnchorPane>
+        </content>
+      </Tab>
+      <Tab fx:id="diagramTab" disable="true" text="Гистограмма">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <StackedBarChart fx:id="diagramBarChart" layoutX="11.0" layoutY="12.0" prefHeight="572.0" prefWidth="768.0" title="Гистограмма частот">
+                    <xAxis>
+                      <CategoryAxis fx:id="intervalCategoryAxis" label="Интервалы" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis fx:id="chastotaNumberAxis" label="Высота" side="LEFT" />
+                    </yAxis>
+                  </StackedBarChart>
+               </children>
+            </AnchorPane>
+        </content>
+      </Tab>
+  </tabs>
+</TabPane>
