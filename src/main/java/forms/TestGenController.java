@@ -1,6 +1,6 @@
 package forms;
 
-import Sample.NumberSample;
+import sample.NumberSample;
 import generators.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -16,8 +16,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import testsGen.ParamsTest;
-import testsGen.TestsSample;
+import testsGenerators.ParamsTest;
+import testsGenerators.TestsSample;
+import testsGenerators.graphictest.GraphicTest;
+import testsGenerators.graphictest.HistogramDistributionSequenceTest;
+import testsGenerators.statistictest.*;
 
 import java.io.*;
 import java.security.SecureRandom;
@@ -305,7 +308,7 @@ public class TestGenController {
                 numberSample = new NumberSample(numberSamplesSpinner.getValue(), sizeSampleSpinner.getValue());
                 numberSample.setCapacity(capacityNumSpinner.getValue());
                 switch (genNumComboBox.getSelectionModel().getSelectedItem()) {
-                    case "Алгоритм_ГОСТ_ИСО_24153" -> {
+                    case "Алгоритм_ГОСТ_ИСО_24153": {
                         AlgGostPISO24153 algGostPISO24153 = new AlgGostPISO24153();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -355,7 +358,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "GFSR_генератор_с_3_параметрами" -> {
+                    case "GFSR_генератор_с_3_параметрами": {
                         GfsrGeneratorPar3 gfsrGeneratorPar3 = new GfsrGeneratorPar3();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -402,7 +405,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "GFSR_генератор_с_5_параметрами" -> {
+                    case "GFSR_генератор_с_5_параметрами": {
                         GfsrGeneratorPar5 gfsrGeneratorPar5 = new GfsrGeneratorPar5();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -449,7 +452,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "Генератор_Таусворта" -> {
+                    case "Генератор_Таусворта": {
                         TausworthGenerator tausworthGenerator = new TausworthGenerator();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -496,7 +499,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "Генератор_Твистера" -> {
+                    case "Генератор_Твистера": {
                         TwisterGenerator twisterGenerator = new TwisterGenerator();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -544,7 +547,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "LCG_генератор_V1" -> {
+                    case "LCG_генератор_V1": {
                         LCGeneratorV1 lcGeneratorV1 = new LCGeneratorV1();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -591,7 +594,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "LCG_генератор_V2" -> {
+                    case "LCG_генератор_V2": {
                         LCGeneratorV2 lcGeneratorV2 = new LCGeneratorV2();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -638,7 +641,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "Мультипликативный_генератор_V1" -> {
+                    case "Мультипликативный_генератор_V1": {
                         MultiplicativeGeneratorV1 multiplicativeGeneratorV1 = new MultiplicativeGeneratorV1();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -685,7 +688,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "Мультипликативный_генератор_V2" -> {
+                    case "Мультипликативный_генератор_V2": {
                         MultiplicativeGeneratorV2 multiplicativeGeneratorV2 = new MultiplicativeGeneratorV2();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -732,7 +735,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "Мультипликативный_генератор_V3" -> {
+                    case "Мультипликативный_генератор_V3": {
                         MultiplicativeGeneratorV3 multiplicativeGeneratorV3 = new MultiplicativeGeneratorV3();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -779,7 +782,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "Мультипликативный_генератор_V4" -> {
+                    case "Мультипликативный_генератор_V4": {
                         MultiplicativeGeneratorV4 multiplicativeGeneratorV4 = new MultiplicativeGeneratorV4();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -826,7 +829,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "Random_генератор" -> {
+                    case "Random_генератор": {
                         Random r = new Random();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -873,7 +876,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "SecureRandom_генератор" -> {
+                    case "SecureRandom_генератор": {
                         SecureRandom sr = new SecureRandom();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -920,7 +923,7 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
-                    case "SplittableRandom_генератор" -> {
+                    case "SplittableRandom_генератор": {
                         SplittableRandom splittableRandom = null;
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
                             case "Вручную":
@@ -1046,63 +1049,55 @@ public class TestGenController {
         ProgressForm pForm = new ProgressForm();
 
         ParamsTest paramsTest = new ParamsTest();
-        TestsSample testsSample = new TestsSample(numberSample, paramsTest);
         paramsTest.setA(aSpinner.getValue());
 
-        Thread thread1 = new Thread(() -> {
-            testsSample.testFun1Double();
-            testsSample.testFun2Double();
-            testsSample.testFun3Double();
-        });
-        Thread thread2 = new Thread(() -> {
-            testsSample.testFun4();
-            testsSample.testFun5();
-        });
-        Thread thread3 = new Thread(() -> {
-            testsSample.testFun6();
-            testsSample.testFun7();
-        });
-        Thread thread4 = new Thread(() -> {
-            testsSample.testFun8();
-            testsSample.testFun9();
-        });
-        Thread thread5 = new Thread(() -> {
-            testsSample.testFun11();
-            testsSample.testFun12();
-        });
-        Thread thread6 = new Thread(testsSample::testFunGraphicDouble);
-        List<Thread> listThread = new ArrayList<>();
-        listThread.add(thread1);
-        listThread.add(thread2);
-        listThread.add(thread3);
-        listThread.add(thread4);
-        listThread.add(thread5);
-        listThread.add(thread6);
-        for (var th :
-                listThread) {
-            try {
-                th.start();
-            } catch (OutOfMemoryError e) {
-                Alert alert1 = new Alert(Alert.AlertType.ERROR);
-                alert1.setTitle("Окно ошибки");
-                alert1.setHeaderText("Переполнение памяти");
-                alert1.setContentText("Тест Колмогорова-Смирнова не выполнится");
-                alert1.show();
-            }
-        }
-        setPixels();
-        testsSample.testFun10();
-        for (var th :
-                listThread) {
-            th.join();
-        }
-        listThread.clear();
+        TestsSample testsSample = new TestsSample(numberSample, paramsTest);
+
+        testsSample.initParams();
+        List<Test> statisticTests = new ArrayList<>();
+        statisticTests.add(new UniformDistributionConfidenceIntervalTest(numberSample, paramsTest));
+        statisticTests.add(new UniformDistributionChiSquareTest(numberSample, paramsTest));
+        statisticTests.add(new MeanTest(numberSample, paramsTest, testsSample.getSummaryStatistics()));
+        statisticTests.add(new CumulativeSumsTest(numberSample, paramsTest));
+        statisticTests.add(new RunTest(numberSample, paramsTest));
+        statisticTests.add(new FrequencyMonobitTest(numberSample, paramsTest));
+        statisticTests.add(new FrequencyLongSequencesTest(numberSample, paramsTest));
+        statisticTests.add(new SerialTest(numberSample, paramsTest));
+        //9)	Спектральный тест (Spectral test).
+        //10)	Проверка сжатия при помощи алгоритма Лемпель-Зива (Lempel-Ziv  complexity  test или Lempel-Ziv compression test).
+        //11)	Проверка аппроксимированной энтропии (Approximate entropy test).
+        //12)	Проверка линейной сложности (Linear complexity test).
+        //13)	Проверка рангов матриц (Binary matrix rank test).
+        statisticTests.add(new FrequencyBlockTest(numberSample, paramsTest));
+        //15)	Проверка случайных отклонений (Random excursion test).
+        statisticTests.add(new MaurerUniversalStatisticalTest(numberSample, paramsTest));
+        statisticTests.add(new LongestRunOnesInBlockTest(numberSample, paramsTest));
+        //18)	Проверка непересекающихся шаблонов (Non-overlapping template matching test).
+        //19)	Тест «стопка книг».
+        statisticTests.add(new PokerTest(numberSample, paramsTest));
+        statisticTests.add(new KolmogorovSmirnovTest(numberSample, paramsTest));
+
+        List<GraphicTest> graphicTests = new ArrayList<>();
+        HistogramDistributionSequenceTest histogramDistributionSequenceTest
+                = new HistogramDistributionSequenceTest(numberSample);
+        graphicTests.add(histogramDistributionSequenceTest);
+
+        testsSample.runStatisticTest(statisticTests);
+        testsSample.runGraphicTest(graphicTests);
         XYChart.Series<String, Number> dataSeries1 = new XYChart.Series<>();
-        for (int i = 0; i < paramsTest.getHeights().length; i++) {
-            dataSeries1.getData().add(new XYChart.Data<>(String.valueOf(i + 1), paramsTest.getParamHeights(i)));
+        for (int i = 0; i < histogramDistributionSequenceTest.getHeights().length; i++) {
+            dataSeries1.getData().add(new XYChart.Data<>(String.valueOf(i + 1), histogramDistributionSequenceTest.getParamHeights(i)));
         }
         dataSeries1.setName("Частоты");
         diagramBarChart.getData().add(dataSeries1);
+
+        setPixels();
+
+        resTextArea.clear();
+        statisticTests.stream().map(Test::result).forEach(x -> {
+            resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
+            resTextArea.appendText(x.toString());
+        });
         writeText(testsSample);
         pForm.getDialogStage().setTitle("ТЕСТИРОВАНИЕ ЗАКОНЧЕНО!");
     }
@@ -1112,12 +1107,14 @@ public class TestGenController {
         gc.clearRect(0, 0, graphTestCanvas.getWidth(), graphTestCanvas.getHeight());
         GraphicsContext gc1 = graphDopTestCanvas.getGraphicsContext2D();
         gc1.clearRect(0, 0, graphTestCanvas.getWidth(), graphTestCanvas.getHeight());
-        int size = numberSample.getNSampleMas() - 4;
+        //int size = numberSample.getNSampleMas() - 4;
+        int size = numberSample.getNSample() - 4;
         if (size > 8388608) {
             size = 8388608;
         }
         int max = (int) (Math.pow(2, numberSample.getCapacity()) - 1);
-        int[] pixelsMas = numberSample.matrToMas();
+        //int[] pixelsMas = numberSample.matrToMas();
+        int[] pixelsMas = numberSample.getSample()[0];
         for (int i = 0; i < size; i++) {
             gc.getPixelWriter().setColor(
                     (int) (graphTestCanvas.getWidth() * (double) pixelsMas[i] / max),
@@ -1136,116 +1133,9 @@ public class TestGenController {
     }
 
     public void writeText(TestsSample testsSample) {
-        resTextArea.clear();
-        resTextArea.appendText("Тест 1. Проверка гипотезы равномерного распределения случайной величины с помощью доверительного интервала:\n");
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[0] + "\n");
-        if (testsSample.getTest()[0]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 2. Проверка гипотезы равномерного распределения случайной величины с помощью критерия хи-квадрат:\n");
-        if (testsSample.getTestPval()[1])
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[1] + "\n");
-        if (testsSample.getTest()[1] && testsSample.getTestPval()[1]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 3. Оценка математического ожидания каждой выборки случайных чисел:\n");
-        resTextArea.appendText("Эксперементально измеренное математическое ожидание каждой выборки: " + (double) Math.round(testsSample.getExpMean() * 100000.0) / 100000.0 + "\n");
-        resTextArea.appendText("Теоретическое математическое ожидание: " + 0.5 + "\n");
-        resTextArea.appendText("Процент отклонения рассчитанного математического ожидания от теоретического: " + (double) Math.round(testsSample.getDol()[2] * 100000.0) / 100000.0 + "%" + "\n");
-        if (testsSample.getTest()[2]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 4. Частотный монобитный тест:\n");
-        if (testsSample.getTestPval()[3])
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[3] + "\n");
-        if (testsSample.getTest()[3] && testsSample.getTestPval()[3]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 5. Частотный тест в подпоследовательностях:\n");
-        if (testsSample.getTestPval()[4])
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[4] + "\n");
-        if (testsSample.getTest()[4]&& testsSample.getTestPval()[4]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 6. Частотный тест на длинные последовательности:\n");
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[5] + "\n");
-        if (testsSample.getTest()[5]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 7. Тест на последовательность одинаковых битов:\n");
-        if (testsSample.getTestPval()[6])
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[6] + "\n");
-        if (testsSample.getTest()[6] && testsSample.getTestPval()[6]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 8. Тест на проверку на равномерности в подпоследовательностях:\n");
-        if (testsSample.getTestPval()[7])
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[7] + "\n");
-        if (testsSample.getTest()[7] && testsSample.getTestPval()[7]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 9. Покер-тест:\n");
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[8] + "\n");
-        if (testsSample.getTest()[8]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 10. Тест Колмогорова-Смирнова:\n");
-        if (testsSample.getTestPval()[9])
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[9] + "\n");
-        if (testsSample.getTest()[9] && testsSample.getTestPval()[9]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 11. Тест на проверку серий битов:\n");
-        if (testsSample.getTestPval()[10])
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[10] + "\n");
-        if (testsSample.getTest()[10] && testsSample.getTestPval()[10]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
-        resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
-        resTextArea.appendText("Тест 12. Универсальный статистический тест Маурера:\n");
-        if (testsSample.getTestPval()[11])
-        resTextArea.appendText("Доля последовательностей прошедших тест: " + testsSample.getDol()[11] + "\n");
-        if (testsSample.getTest()[11] && testsSample.getTestPval()[11]) {
-            resTextArea.appendText("Тест пройден\n");
-        } else {
-            resTextArea.appendText("Тест не пройден\n");
-        }
         if (90 <= testsSample.getResTests() && testsSample.getResTests() <= 100) {
             resLabel.setText("Последовательность с большой вероятностью случайна");
-        }
-        else {
+        } else {
             resLabel.setText("Последовательность не случайна");
         }
         resProcLabel.setText("Процент пройденных тестов: " + testsSample.getResTests() + "%");
