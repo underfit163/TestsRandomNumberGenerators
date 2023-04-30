@@ -1070,7 +1070,7 @@ public class TestGenController {
         statisticTests.add(new LinearComplexityTest(numberSample, paramsTest, 500));
         statisticTests.add(new RankTest(numberSample, paramsTest, 32));
         statisticTests.add(new FrequencyBlockTest(numberSample, paramsTest, 20));
-        //15)	Проверка случайных отклонений (Random excursion test).
+        statisticTests.add(new RandomExcursionsTest(numberSample, paramsTest));
         statisticTests.add(new MaurerUniversalStatisticalTest(numberSample, paramsTest));
         statisticTests.add(new LongestRunOnesInBlockTest(numberSample, paramsTest));
         //18)	Проверка непересекающихся шаблонов (Non-overlapping template matching test).
