@@ -99,9 +99,9 @@ public class PokerTest implements Test {
     }
 
     @Override
-    public StringBuilder result() {
+    public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Тест 20. Покер-тест:\n");
+        stringBuilder.append("Тест ").append(count).append(". Покер-тест:\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

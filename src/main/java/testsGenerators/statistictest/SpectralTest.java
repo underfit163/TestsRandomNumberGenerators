@@ -1,38 +1,68 @@
 package testsGenerators.statistictest;
 
+import edu.emory.mathcs.jtransforms.fft.DoubleFFT_1D;
+import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.special.Gamma;
 import sample.NumberSample;
 import testsGenerators.ParamsTest;
 
-/*
-2)	Проверка гипотезы равномерного распределения случайной величины с помощью доверительного интервала.
+import java.util.stream.IntStream;
+
+/**
+ * 9)	Спектральный тест (Spectral test).
  */
-public class UniformDistributionChiSquareTest extends UniformDistributionTest implements Test {
+public class SpectralTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
 
-    public UniformDistributionChiSquareTest(NumberSample numberSample, ParamsTest paramsTest) {
-        super(numberSample);
+    public SpectralTest(NumberSample numberSample, ParamsTest paramsTest) {
         this.numberSample = numberSample;
         this.paramsTest = paramsTest;
     }
 
     @Override
     public void runTest() {
-        //число интервалов
-        int n = 10;
-        double[] xi2 = new double[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
-        int count = 0;
-        //длина интервала
-        double len = (double) 1 / n;
-        initFrequency(n, len);
+        int n = numberSample.getBitSetList().get(0).length();
+        if (n > 500_000) n = 500_000;
+        //double[] percentile = new double[numberSample.getCountSample()];
+        double[] N_l = new double[numberSample.getCountSample()];
+        double N_o = 0.95 * n / 2.0;
+        double[] d = new double[numberSample.getCountSample()];
 
-        for (int i = 0; i < numberSample.getCountSample(); i++) {
-            for (int j = 0; j < n; j++) {
-                xi2[i] += Math.pow(getFrequencyCountDouble()[i][j] - (double) numberSample.getNSample() / n, 2) / ((double) numberSample.getNSample() / n);
+        double upperBound = Math.sqrt(3 * n);
+        double[][] X = new double[numberSample.getCountSample()][n];
+        double[][] m = new double[numberSample.getCountSample()][n / 2 + 1];
+        int[] counts = new int[numberSample.getCountSample()];
+        double[] pValue = new double[numberSample.getCountSample()];
+
+        int finalN = n;
+        IntStream.range(0, numberSample.getCountSample()).parallel().forEach(i -> {
+            for (int j = 0; j < finalN; j++) {
+                if (numberSample.getBitSetList().get(i).get(j)) X[i][j] = 1;
+                else X[i][j] = -1;
             }
-            pValue[i] = Gamma.regularizedGammaQ((double) (n - 1) / 2, xi2[i] / 2);
+            DoubleFFT_1D fft = new DoubleFFT_1D(finalN);
+            fft.realForward(X[i]);
+            m[i][0] = Math.sqrt(X[i][0] * X[i][0]);
+            m[i][finalN / 2] = Math.sqrt(X[i][1] * X[i][1]);
+
+            for (int k = 0; k < finalN / 2 - 1; k++) {
+                m[i][k + 1] = Math.hypot(X[i][2 * k + 2], X[i][2 * k + 3]);
+            }
+
+            for (int k = 0; k < finalN / 2; k++) {
+                if (m[i][k] < upperBound) {
+                    counts[i]++;
+                }
+            }
+            //percentile[i] = (double) counts[i] / ((double) finalN / 2) * 100;
+            N_l[i] = counts[i];
+            d[i] = (N_l[i] - N_o) / Math.sqrt(finalN / 2.0 * 0.95 * 0.05);
+            pValue[i] = Erf.erfc(Math.abs(d[i]) / Math.sqrt(2.0));
+        });
+
+        int count = 0;
+        for (int i = 0; i < numberSample.getCountSample(); i++) {
             if (paramsTest.getA() <= pValue[i]) {
                 count++;
             }
@@ -41,14 +71,14 @@ public class UniformDistributionChiSquareTest extends UniformDistributionTest im
         int[] vPvalue = new int[10];
         double left;
         double right;
-        for (double v : pValue) {
+        for (double value : pValue) {
             for (int i = 1; i <= vPvalue.length; i++) {
                 left = (double) (i - 1) / 10;
                 right = (double) i / 10;
-                if (i == 10 && v == right) {
+                if (i == 10 && value == right) {
                     vPvalue[i - 1]++;
                 }
-                if (left <= v && v < right) {
+                if (left <= value && value < right) {
                     vPvalue[i - 1]++;
                     break;
                 }
@@ -74,7 +104,7 @@ public class UniformDistributionChiSquareTest extends UniformDistributionTest im
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Тест ").append(count).append(". Проверка гипотезы равномерного распределения случайной величины с помощью критерия хи-квадрат:\n");
+        stringBuilder.append("Тест ").append(count).append(". Спектральный тест:\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

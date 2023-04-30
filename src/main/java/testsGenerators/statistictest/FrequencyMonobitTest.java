@@ -36,8 +36,8 @@ public class FrequencyMonobitTest implements Test {
         double[] pValue = new double[numberSample.getCountSample()];
         int count = 0;
         for (int i = 0; i < numberSample.getCountSample(); i++) {
-            Sn[i] = Math.abs(sum[i]) / Math.sqrt(2 * otherN * numberSample.getCapacity());
-            pValue[i] = Erf.erfc(Sn[i]);
+            Sn[i] = Math.abs(sum[i]) / Math.sqrt(otherN * numberSample.getCapacity());
+            pValue[i] = Erf.erfc(Sn[i]/ Math.sqrt(2));
             if (paramsTest.getA() <= pValue[i]) {
                 count++;
             }
@@ -88,9 +88,9 @@ public class FrequencyMonobitTest implements Test {
     }
 
     @Override
-    public StringBuilder result() {
+    public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Тест 6. Частотный тест в подпоследовательностях:\n");
+        stringBuilder.append("Тест ").append(count).append(". Частотный тест:\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

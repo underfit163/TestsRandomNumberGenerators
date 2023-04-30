@@ -1,38 +1,83 @@
 package testsGenerators.statistictest;
 
 import org.apache.commons.math3.special.Gamma;
+import sample.IntMatrix;
 import sample.NumberSample;
 import testsGenerators.ParamsTest;
 
-/*
-2)	Проверка гипотезы равномерного распределения случайной величины с помощью доверительного интервала.
+import java.util.stream.IntStream;
+
+/**
+ * 13)	Проверка рангов матриц (Binary matrix rank test).
  */
-public class UniformDistributionChiSquareTest extends UniformDistributionTest implements Test {
+public class RankTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
+    private final int r;
 
-    public UniformDistributionChiSquareTest(NumberSample numberSample, ParamsTest paramsTest) {
-        super(numberSample);
+    public RankTest(NumberSample numberSample, ParamsTest paramsTest, int r) {
         this.numberSample = numberSample;
         this.paramsTest = paramsTest;
+        this.r = r;
     }
+
 
     @Override
     public void runTest() {
-        //число интервалов
-        int n = 10;
-        double[] xi2 = new double[numberSample.getCountSample()];
+        double[] chiSquared = new double[numberSample.getCountSample()];
         double[] pValue = new double[numberSample.getCountSample()];
-        int count = 0;
-        //длина интервала
-        double len = (double) 1 / n;
-        initFrequency(n, len);
+        double p_r2;
+        double p_r1;
+        double p_r0;
 
-        for (int i = 0; i < numberSample.getCountSample(); i++) {
-            for (int j = 0; j < n; j++) {
-                xi2[i] += Math.pow(getFrequencyCountDouble()[i][j] - (double) numberSample.getNSample() / n, 2) / ((double) numberSample.getNSample() / n);
+        int length = numberSample.getBitSetList().get(0).length();
+        if (length < r * r) {
+            length = r * r;
+        }
+        int N = length / (r * r);
+
+        /* COMPUTE PROBABILITIES */
+        double product = 1;
+        for (int i = 0; i <= r - 1; i++) {
+            product *= ((1.e0 - Math.pow(2.0, i - r)) * (1.e0 - Math.pow(2.0, i - r))) / (1.e0 - Math.pow(2.0, (double) i - r));
+        }
+        p_r2 = Math.pow(2.0, (double) r * (r + r - r) - r * r) * product;
+
+        int r1 = r - 1;
+        product = 1;
+        for (int i = 0; i <= r1 - 1; i++) {
+            product *= ((1.e0 - Math.pow(2.0, i - r)) * (1.e0 - Math.pow(2.0, i - r))) / (1.e0 - Math.pow(2.0, (double) i - r1));
+        }
+        p_r1 = Math.pow(2.0, (double) r1 * (r + r - r1) - r * r) * product;
+
+        p_r0 = 1 - (p_r2 + p_r1);
+
+        IntStream.range(0, numberSample.getCountSample()).parallel().forEach(i -> {
+            double R;
+            IntMatrix matrix = new IntMatrix(r, r);
+            int F_r2 = 0;
+            int F_r1 = 0;
+            for (int k = 0; k < N; k++) {
+                /* FOR EACH 32x32 MATRIX   */
+                matrix.assignFromBits(numberSample.getBitSetList().get(i), k * r * r);
+                R = matrix.computeRank();
+                if (R == r) {
+                    F_r2++;
+                }
+                if (R == r1) {
+                    F_r1++;
+                }
             }
-            pValue[i] = Gamma.regularizedGammaQ((double) (n - 1) / 2, xi2[i] / 2);
+
+            int F_r0 = N - (F_r2 + F_r1);
+            chiSquared[i] = (Math.pow(F_r2 - N * p_r2, 2) / (N * p_r2)
+                    + Math.pow(F_r1 - N * p_r1, 2) / (N * p_r1)
+                    + Math.pow(F_r0 - N * p_r0, 2) / (N * p_r0));
+            pValue[i] = Gamma.regularizedGammaQ(1, chiSquared[i] / 2);
+        });
+
+        int count = 0;
+        for (int i = 0; i < numberSample.getCountSample(); i++) {
             if (paramsTest.getA() <= pValue[i]) {
                 count++;
             }
@@ -41,14 +86,14 @@ public class UniformDistributionChiSquareTest extends UniformDistributionTest im
         int[] vPvalue = new int[10];
         double left;
         double right;
-        for (double v : pValue) {
+        for (double value : pValue) {
             for (int i = 1; i <= vPvalue.length; i++) {
                 left = (double) (i - 1) / 10;
                 right = (double) i / 10;
-                if (i == 10 && v == right) {
+                if (i == 10 && value == right) {
                     vPvalue[i - 1]++;
                 }
-                if (left <= v && v < right) {
+                if (left <= value && value < right) {
                     vPvalue[i - 1]++;
                     break;
                 }
@@ -74,7 +119,7 @@ public class UniformDistributionChiSquareTest extends UniformDistributionTest im
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Тест ").append(count).append(". Проверка гипотезы равномерного распределения случайной величины с помощью критерия хи-квадрат:\n");
+        stringBuilder.append("Тест ").append(count).append(". Тест рангов матриц:\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

@@ -44,9 +44,9 @@ public class MeanTest implements Test {
     }
 
     @Override
-    public StringBuilder result() {
+    public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Тест 3. Оценка математического ожидания каждой выборки случайных чисел:\n");
+        stringBuilder.append("Тест ").append(count).append(". Оценка математического ожидания каждой выборки случайных чисел:\n");
         stringBuilder.append("Экспериментально измеренное математическое ожидание каждой выборки: ").append((double) Math.round(expMean * 100000.0) / 100000.0).append("\n");
         stringBuilder.append("Теоретическое математическое ожидание: " + 0.5 + "\n");
         stringBuilder.append("Процент отклонения рассчитанного математического ожидания от теоретического: ").append((double) Math.round(paramsTest.getDols().get(getClass().getSimpleName()) * 100000.0) / 100000.0).append("%").append("\n");

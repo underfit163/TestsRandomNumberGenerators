@@ -87,9 +87,9 @@ public class FrequencyLongSequencesTest implements Test {
     }
 
     @Override
-    public StringBuilder result() {
+    public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Тест 7. Частотный тест на длинные последовательности:\n");
+        stringBuilder.append("Тест ").append(count).append(". Частотный тест на длинные последовательности:\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

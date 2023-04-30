@@ -1,11 +1,12 @@
 package testsGenerators.statistictest;
 
-import fr.devnied.bitlib.BytesUtils;
 import org.apache.commons.math3.special.Gamma;
 import sample.NumberSample;
 import testsGenerators.ParamsTest;
 
 import java.util.Arrays;
+import java.util.BitSet;
+import java.util.stream.IntStream;
 
 /*
 14)	Частотный тест в подпоследовательностях (Frequency test with in a block).
@@ -13,10 +14,12 @@ import java.util.Arrays;
 public class FrequencyBlockTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
+    private final int blockLen;
 
-    public FrequencyBlockTest(NumberSample numberSample, ParamsTest paramsTest) {
+    public FrequencyBlockTest(NumberSample numberSample, ParamsTest paramsTest, int blockLen) {
         this.numberSample = numberSample;
         this.paramsTest = paramsTest;
+        this.blockLen = blockLen;
     }
 
     @Override
@@ -26,34 +29,21 @@ public class FrequencyBlockTest implements Test {
 
     @Override
     public void runTest() {
-        long n = (long) numberSample.getNSample() * numberSample.getCapacity();
-        int N;
-        long M = 19;
-        do {
-            M++;
-            N = (int) (n / M);
-        }
-        while (N >= 100 || M <= 0.01 * n);
-        long nNew = (long) N * M;
-        int otherNSample = (int) (nNew / numberSample.getCapacity());
-        int diff = (int) (nNew % numberSample.getCapacity());
-        double[][] sum = new double[numberSample.getCountSample()][N];
-        for (int i = 0; i < numberSample.getCountSample(); i++) {
-            long finalM = M;
-            int finalI = i;
-            Arrays.parallelSetAll(sum[i], t -> getCountBit(t, finalI, otherNSample, diff, finalM));
-        }
-
+        long n = numberSample.getBitSetList().get(0).length();
         double[] xi2 = new double[numberSample.getCountSample()];
         double[] pValue = new double[numberSample.getCountSample()];
+        int blockCount = (int) (n / blockLen);
+        double[][] sum = new double[numberSample.getCountSample()][blockCount];
+
+        IntStream.range(0, numberSample.getCountSample()).parallel().forEach(i -> Arrays.parallelSetAll(sum[i], t -> getCountBit(t, numberSample.getBitSetList().get(i))));
         int count = 0;
         double p = 0;
         for (int i = 0; i < numberSample.getCountSample(); i++) {
-            for (int j = 0; j < N; j++) {
+            for (int j = 0; j < blockCount; j++) {
                 p += Math.pow(sum[i][j] - 0.5, 2);
             }
-            xi2[i] = 4 * M * p;
-            pValue[i] = Gamma.regularizedGammaQ((double) N / 2, xi2[i] / 2);
+            xi2[i] = 4 * blockLen * p;
+            pValue[i] = Gamma.regularizedGammaQ((double) blockCount / 2, xi2[i] / 2);
             if (paramsTest.getA() <= pValue[i]) {
                 count++;
             }
@@ -93,32 +83,19 @@ public class FrequencyBlockTest implements Test {
         } else paramsTest.getTests().put(getClass().getSimpleName(), false);
     }
 
-    public double getCountBit(int t, int i, int otherNSample, int diff, long M) {
-        int bitCount = 0;
-        for (int j = (int) ((t * M) / numberSample.getCapacity()); j < (int) (((t + 1) * M) / numberSample.getCapacity()); j++) {
-            for (int k = (numberSample.getCapacity() - 1); k >= 0; k--) {
-                long p = (long) numberSample.getCapacity() * j + (numberSample.getCapacity() - 1 - k);
-                if (M * t <= p && p < M * (t + 1)) {
-                    if (BytesUtils.matchBitByBitIndex(numberSample.getItemSample(i, j), k)) bitCount++;
-                }
-                if (diff != 0 && j == otherNSample - 1 && k == 0) {
-                    for (int l = (numberSample.getCapacity() - 1); l > (numberSample.getCapacity() - 1 - diff); l--) {
-                        if (BytesUtils.matchBitByBitIndex(numberSample.getItemSample(i, j + 1), l)) bitCount++;
-                        p++;
-                    }
-                }
-                if (p == (M * (t + 1) - 1)) {
-                    return (double) bitCount / M;
-                }
+    public double getCountBit(int t, BitSet bitSet) {
+        int blockSum = 0;
+        int offset = t * blockLen;
+            for (int j = 0; j < blockLen; j++) {
+                blockSum += bitSet.get(offset + j)? 1 : 0;
             }
-        }
-        return (double) bitCount / M;
+        return (double) blockSum / (double) blockLen;
     }
 
     @Override
-    public StringBuilder result() {
+    public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Тест 14. Частотный тест в подпоследовательностях:\n");
+        stringBuilder.append("Тест ").append(count).append(". Частотный тест в подпоследовательностях:\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

@@ -15,7 +15,6 @@ public class CumulativeSumsTest implements Test {
     private final ParamsTest paramsTest;
     private final NormalDistribution nd = new NormalDistribution();
 
-
     public CumulativeSumsTest(NumberSample numberSample, ParamsTest paramsTest) {
         this.numberSample = numberSample;
         this.paramsTest = paramsTest;
@@ -23,7 +22,7 @@ public class CumulativeSumsTest implements Test {
 
     @Override
     public void runTest() {
-        long n = (long) numberSample.getNSample() * numberSample.getCapacity();
+        long n = numberSample.getBitSetList().get(0).length();
         //if (n > 1_000_000) n = 1_000_000;
         int[] z = new int[numberSample.getCountSample()];
         int[] zrev = new int[numberSample.getCountSample()];
@@ -66,8 +65,7 @@ public class CumulativeSumsTest implements Test {
         int[] vPvalue = new int[10];
         double left;
         double right;
-        for (
-                double value : pValue) {
+        for (double value : pValue) {
             for (int i = 1; i <= vPvalue.length; i++) {
                 left = (double) (i - 1) / 10;
                 right = (double) i / 10;
@@ -81,8 +79,7 @@ public class CumulativeSumsTest implements Test {
             }
         }
         double xi2Pvalue = 0;
-        for (
-                int j : vPvalue) {
+        for (int j : vPvalue) {
             xi2Pvalue += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
         }
         xi2Pvalue = xi2Pvalue / ((double) numberSample.getCountSample() / 10);
@@ -99,9 +96,9 @@ public class CumulativeSumsTest implements Test {
     }
 
     @Override
-    public StringBuilder result() {
+    public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Тест 4. Проверка кумулятивных сумм:\n");
+        stringBuilder.append("Тест ").append(count).append(". Проверка кумулятивных сумм:\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

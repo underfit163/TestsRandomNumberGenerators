@@ -258,9 +258,9 @@ public class LongestRunOnesInBlockTest implements Test {
     }
 
     @Override
-    public StringBuilder result() {
+    public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Тест 17. Тест «блоков» в подпоследовательностях:\n");
+        stringBuilder.append("Тест ").append(count).append(". Тест «блоков» в подпоследовательностях:\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

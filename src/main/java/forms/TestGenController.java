@@ -26,6 +26,7 @@ import java.io.*;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestGenController {
 
@@ -1055,7 +1056,7 @@ public class TestGenController {
 
         testsSample.initParams();
         List<Test> statisticTests = new ArrayList<>();
-        statisticTests.add(new UniformDistributionConfidenceIntervalTest(numberSample, paramsTest));
+        //statisticTests.add(new UniformDistributionConfidenceIntervalTest(numberSample, paramsTest));
         statisticTests.add(new UniformDistributionChiSquareTest(numberSample, paramsTest));
         statisticTests.add(new MeanTest(numberSample, paramsTest, testsSample.getSummaryStatistics()));
         statisticTests.add(new CumulativeSumsTest(numberSample, paramsTest));
@@ -1063,12 +1064,12 @@ public class TestGenController {
         statisticTests.add(new FrequencyMonobitTest(numberSample, paramsTest));
         statisticTests.add(new FrequencyLongSequencesTest(numberSample, paramsTest));
         statisticTests.add(new SerialTest(numberSample, paramsTest));
-        //9)	Спектральный тест (Spectral test).
+        statisticTests.add(new SpectralTest(numberSample, paramsTest));
         //10)	Проверка сжатия при помощи алгоритма Лемпель-Зива (Lempel-Ziv  complexity  test или Lempel-Ziv compression test).
-        //11)	Проверка аппроксимированной энтропии (Approximate entropy test).
-        //12)	Проверка линейной сложности (Linear complexity test).
-        //13)	Проверка рангов матриц (Binary matrix rank test).
-        statisticTests.add(new FrequencyBlockTest(numberSample, paramsTest));
+        statisticTests.add(new ApproximateEntropyTest(numberSample, paramsTest, 3));
+        statisticTests.add(new LinearComplexityTest(numberSample, paramsTest, 500));
+        statisticTests.add(new RankTest(numberSample, paramsTest, 32));
+        statisticTests.add(new FrequencyBlockTest(numberSample, paramsTest, 20));
         //15)	Проверка случайных отклонений (Random excursion test).
         statisticTests.add(new MaurerUniversalStatisticalTest(numberSample, paramsTest));
         statisticTests.add(new LongestRunOnesInBlockTest(numberSample, paramsTest));
@@ -1094,7 +1095,8 @@ public class TestGenController {
         setPixels();
 
         resTextArea.clear();
-        statisticTests.stream().map(Test::result).forEach(x -> {
+        AtomicInteger k = new AtomicInteger(1);
+        statisticTests.stream().map(x-> x.result(k.getAndIncrement())).forEach(x -> {
             resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
             resTextArea.appendText(x.toString());
         });
