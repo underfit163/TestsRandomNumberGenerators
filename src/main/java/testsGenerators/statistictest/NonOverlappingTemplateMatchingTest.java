@@ -1,63 +1,106 @@
 package testsGenerators.statistictest;
 
-import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.special.Gamma;
+import sample.AperiodicTemplate;
 import sample.NumberSample;
 import testsGenerators.ParamsTest;
 
+import java.util.Iterator;
+import java.util.stream.IntStream;
+
 /**
- * 15)	Проверка случайных отклонений (Random excursion test).
+ * 18)	Проверка непересекающихся шаблонов (Non-overlapping template matching test).
  */
-public class RandomExcursionsTest implements Test {
+public class NonOverlappingTemplateMatchingTest implements Test {
+
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
-    private static final int[] stateX = {-9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    private int N;
+    private final int m;
+    static final int MAXNUMOFTEMPLATES = 148;
 
-    public RandomExcursionsTest(NumberSample numberSample, ParamsTest paramsTest) {
+    /**
+     * @param templateLength размер шаблона в битах
+     * @param N              количество не пересекающихся битовых последовательностей
+     */
+    public NonOverlappingTemplateMatchingTest(NumberSample numberSample, ParamsTest paramsTest, int templateLength, int N) {
         this.numberSample = numberSample;
         this.paramsTest = paramsTest;
+        this.m = templateLength;
+        this.N = N;
     }
 
     @Override
     public void runTest() {
-        double[][] pValue = new double[numberSample.getCountSample()][stateX.length];
         int length = numberSample.getBitSetList().get(0).length();
-        int[] S_k = new int[length];
 
-        for (int j = 0; j < numberSample.getCountSample(); j++) {
-            int J = 0;
-            S_k[0] = 2 * (numberSample.getBitSetList().get(j).get(0) ? 1 : 0) - 1;
-            for (int i = 1; i < length; i++) {
-                S_k[i] = S_k[i - 1] + 2 * (numberSample.getBitSetList().get(j).get(i) ? 1 : 0) - 1;
-                if (S_k[i] == 0) {
-                    J++;
+
+        int M = length / N;//количество бит в одной последовательности
+
+        double lambda = (M - m + 1) / Math.pow(2, m);//мат. ожидание
+        double varWj = M * (1.0 / Math.pow(2.0, m) - (2.0 * m - 1.0) / Math.pow(2.0, 2.0 * m));//gamma
+        AperiodicTemplate at = new AperiodicTemplate(m);
+        int numOfTemplates = at.getCount();
+        if ((lambda < 0) || (lambda == 0)) {
+            throw new IllegalArgumentException("lambda not positive");
+        }
+        int SKIP;
+        if (numOfTemplates < MAXNUMOFTEMPLATES) {
+            SKIP = 1;
+        } else {
+            SKIP = numOfTemplates / MAXNUMOFTEMPLATES;
+        }
+        numOfTemplates = numOfTemplates / SKIP;
+
+        int numberOfTests = Math.min(MAXNUMOFTEMPLATES, numOfTemplates);
+        double[][] chiSquared = new double[numberSample.getCountSample()][numberOfTests];
+        double[][] pValue = new double[numberSample.getCountSample()][numberOfTests];
+
+        IntStream.range(0, numberSample.getCountSample()).parallel().forEach(t -> {
+            Iterator<Long> I = at.iterator();
+            int[] Wj = new int[N];
+            for (int jj = 0; jj < numberOfTests; jj++) {
+                Long seq = I.next();
+                for (int i = 0; i < N; i++) {
+                    int W_obs = 0;
+                    for (int j = 0; j < M - m + 1; j++) {
+                        int match = 1;
+                        for (int k = 0; k < m; k++) {
+                            if ((int) ((seq >> (m - k - 1)) & 0x1) != (numberSample.getBitSetList().get(t).get(i * M + j + k) ? 1 : 0)) {
+                                match = 0;
+                                break;
+                            }
+                        }
+                        if (match == 1) {
+                            W_obs++;
+                            j += m - 1;
+                        }
+                    }
+                    Wj[i] = W_obs;
                 }
-            }
-            if (S_k[length - 1] != 0) {
-                J++;
-            }
+                chiSquared[t][jj] = 0;
+                for (int i = 0; i < N; i++) {
+                    chiSquared[t][jj] += Math.pow(((double) Wj[i] - lambda) / Math.pow(varWj, 0.5), 2);
+                }
+                pValue[t][jj] = Gamma.regularizedGammaQ(N / 2.0, chiSquared[t][jj] / 2.0);
 
-            for (int p = 0; p < stateX.length; p++) {
-                int x = stateX[p];
-                int count = 0;
-                for (int i = 0; i < length; i++) {
-                    if (S_k[i] == x) {
-                        count++;
+                if (SKIP > 1) {
+                    for (int k = 1; k < SKIP && I.hasNext(); k++) {
+                        I.next();
                     }
                 }
-                pValue[j][p] = Erf.erfc(Math.abs(count - J) / (Math.sqrt(2.0 * J * (4.0 * Math.abs(x) - 2))));
             }
-        }
+        });
         int count = 0;
         int otherCount;
         for (int i = 0; i < numberSample.getCountSample(); i++) {
             otherCount = 0;
-            for (int j = 0; j < stateX.length; j++) {
+            for (int j = 0; j < numberOfTests; j++) {
                 if (paramsTest.getA() <= pValue[i][j]) {
                     otherCount++;
                 }
             }
-            if (otherCount >= stateX.length * 0.9) count++;
+            if (otherCount >= numberOfTests * 0.9) count++;
         }
         //Анализ числа появлений значений P-value
         int[] vPvalue = new int[10];
@@ -99,7 +142,7 @@ public class RandomExcursionsTest implements Test {
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Тест ").append(count).append(". Проверка случайных отклонений:\n");
+        stringBuilder.append("Тест ").append(count).append(". Проверка непересекающихся шаблонов:\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

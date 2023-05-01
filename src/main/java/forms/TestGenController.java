@@ -1073,8 +1073,8 @@ public class TestGenController {
         statisticTests.add(new RandomExcursionsTest(numberSample, paramsTest));
         statisticTests.add(new MaurerUniversalStatisticalTest(numberSample, paramsTest));
         statisticTests.add(new LongestRunOnesInBlockTest(numberSample, paramsTest));
-        //18)	Проверка непересекающихся шаблонов (Non-overlapping template matching test).
-        //19)	Тест «стопка книг».
+        statisticTests.add(new NonOverlappingTemplateMatchingTest(numberSample, paramsTest, 6, 8));
+        statisticTests.add(new StackBooksTest(numberSample, paramsTest, 4));
         statisticTests.add(new PokerTest(numberSample, paramsTest));
         statisticTests.add(new KolmogorovSmirnovTest(numberSample, paramsTest));
 
