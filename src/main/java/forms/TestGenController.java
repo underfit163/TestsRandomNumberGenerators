@@ -1,6 +1,5 @@
 package forms;
 
-import sample.NumberSample;
 import generators.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -9,17 +8,19 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.chart.*;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.StackedBarChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import sample.NumberSample;
 import testsGenerators.ParamsTest;
 import testsGenerators.TestsSample;
-import testsGenerators.graphictest.GraphicTest;
-import testsGenerators.graphictest.HistogramDistributionSequenceTest;
+import testsGenerators.graphictest.*;
 import testsGenerators.statistictest.*;
 
 import java.io.*;
@@ -48,7 +49,7 @@ public class TestGenController {
     public TextArea resTextArea;
     public Tab graphicTab;
     public Canvas graphTestCanvas;
-    public StackedBarChart diagramBarChart;
+    public StackedBarChart<String, Number> diagramBarChart;
     public Tab diagramTab;
     public Tab resTab;
     public TextField fileTextField;
@@ -68,6 +69,14 @@ public class TestGenController {
     public Label resProcLabel;
     public Label aLabel;
     public Spinner<Double> aSpinner;
+    public StackedBarChart<String, Number> diagramBBarChart;
+    public Tab diagramBTab;
+    public Tab diagramSeriesTab;
+    public StackedBarChart<String, Number> series01BarChart;
+    public StackedBarChart<String, Number> series01BarChart1;
+    public StackedBarChart<String, Number> series01BarChart2;
+    public Tab diagramMonotonyTab;
+    public StackedBarChart<String, Number> diagramMonotonyBarChart;
     private File fileObject;
     private ChangeListener<Integer> changeL;
     private int k = 0;
@@ -1040,12 +1049,20 @@ public class TestGenController {
         aSpinner.setDisable(false);
     }
 
-    public void testButtonHandler(ActionEvent actionEvent) throws InterruptedException {
+    public void testButtonHandler(ActionEvent actionEvent) {
         diagramTab.setDisable(false);
+        diagramBTab.setDisable(false);
+        diagramMonotonyTab.setDisable(false);
+        diagramSeriesTab.setDisable(false);
         graphicTab.setDisable(false);
         graphicDopTab.setDisable(false);
         resTab.setDisable(false);
         diagramBarChart.getData().clear();
+        diagramBBarChart.getData().clear();
+        series01BarChart.getData().clear();
+        series01BarChart1.getData().clear();
+        series01BarChart2.getData().clear();
+        resTextArea.clear();
 
         ProgressForm pForm = new ProgressForm();
 
@@ -1056,7 +1073,6 @@ public class TestGenController {
 
         testsSample.initParams();
         List<Test> statisticTests = new ArrayList<>();
-        //statisticTests.add(new UniformDistributionConfidenceIntervalTest(numberSample, paramsTest));
         statisticTests.add(new UniformDistributionChiSquareTest(numberSample, paramsTest));
         statisticTests.add(new MeanTest(numberSample, paramsTest, testsSample.getSummaryStatistics()));
         statisticTests.add(new CumulativeSumsTest(numberSample, paramsTest));
@@ -1065,7 +1081,6 @@ public class TestGenController {
         statisticTests.add(new FrequencyLongSequencesTest(numberSample, paramsTest));
         statisticTests.add(new SerialTest(numberSample, paramsTest));
         statisticTests.add(new SpectralTest(numberSample, paramsTest));
-        //10)	Проверка сжатия при помощи алгоритма Лемпель-Зива (Lempel-Ziv  complexity  test или Lempel-Ziv compression test).
         statisticTests.add(new ApproximateEntropyTest(numberSample, paramsTest, 3));
         statisticTests.add(new LinearComplexityTest(numberSample, paramsTest, 500));
         statisticTests.add(new RankTest(numberSample, paramsTest, 32));
@@ -1082,9 +1097,19 @@ public class TestGenController {
         HistogramDistributionSequenceTest histogramDistributionSequenceTest
                 = new HistogramDistributionSequenceTest(numberSample);
         graphicTests.add(histogramDistributionSequenceTest);
+        HistogramDistributionByteSequenceTest histogramDistributionByteSequenceTest =
+                new HistogramDistributionByteSequenceTest(numberSample);
+        SeriesGraphicTest seriesGraphicTest = new SeriesGraphicTest(numberSample);
+        MonotonyTest monotonyTest = new MonotonyTest(numberSample);
+
+        graphicTests.add(histogramDistributionByteSequenceTest);
+        graphicTests.add(new DistributionOnPlaneTest(numberSample, graphTestCanvas, graphDopTestCanvas));
+        graphicTests.add(seriesGraphicTest);
+        graphicTests.add(monotonyTest);
 
         testsSample.runStatisticTest(statisticTests);
         testsSample.runGraphicTest(graphicTests);
+
         XYChart.Series<String, Number> dataSeries1 = new XYChart.Series<>();
         for (int i = 0; i < histogramDistributionSequenceTest.getHeights().length; i++) {
             dataSeries1.getData().add(new XYChart.Data<>(String.valueOf(i + 1), histogramDistributionSequenceTest.getParamHeights(i)));
@@ -1092,11 +1117,51 @@ public class TestGenController {
         dataSeries1.setName("Частоты");
         diagramBarChart.getData().add(dataSeries1);
 
-        setPixels();
+        XYChart.Series<String, Number> dataSeries2 = new XYChart.Series<>();
+        histogramDistributionByteSequenceTest.getHeights().forEach((key, value) -> {
+            if (key % 5 == 0) dataSeries2.getData().add(new XYChart.Data<>(String.valueOf(key), value));
+        });
+        dataSeries2.setName("Количество чисел");
+        diagramBBarChart.getData().add(dataSeries2);
 
-        resTextArea.clear();
+        //01
+        XYChart.Series<String, Number> dataSeries3 = new XYChart.Series<>();
+        seriesGraphicTest.getMapV1().forEach((key, value) ->
+                dataSeries3.getData().add(new XYChart.Data<>(String.valueOf(key), value)));
+        dataSeries3.setName("Количество серий");
+        series01BarChart.getData().add(dataSeries3);
+
+        XYChart.Series<String, Number> dataSeries4 = new XYChart.Series<>();
+        seriesGraphicTest.getMapV2().forEach((key, value) ->
+                dataSeries4.getData().add(new XYChart.Data<>(String.valueOf(key), value)));
+        dataSeries4.setName("Количество серий");
+        series01BarChart1.getData().add(dataSeries4);
+
+        XYChart.Series<String, Number> dataSeries5 = new XYChart.Series<>();
+        seriesGraphicTest.getMapV3().forEach((key, value) ->
+                dataSeries5.getData().add(new XYChart.Data<>(String.valueOf(key), value)));
+        dataSeries5.setName("Количество серий");
+        series01BarChart2.getData().add(dataSeries5);
+
+        XYChart.Series<String, Number> dataSeries6 = new XYChart.Series<>();
+        int t = 100;
+        monotonyTest.getMonotonySeries().entrySet().stream().limit(t).forEach(entry -> {
+            dataSeries6.getData().add(new XYChart.Data<>(String.valueOf(entry.getKey()), entry.getValue()));
+        });
+        dataSeries6.getData().forEach(data -> {
+            int index = dataSeries6.getData().indexOf(data);
+            Color color = index % 2 == 0 ? Color.RED : Color.BLUE; // Чередование цветов для четных и нечетных элементов
+            Node node = data.getNode();
+            if (node != null) { // Добавляем проверку на null
+                node.setStyle("-fx-background-color: " + toHex(color) + ", black;");
+                node.setStyle("-fx-background-insets: -1.4, 0;");
+            }
+        });
+        dataSeries6.setName("Участки невозрастания и неубывания элементов последовательности");
+        diagramMonotonyBarChart.getData().add(dataSeries6);
+
         AtomicInteger k = new AtomicInteger(1);
-        statisticTests.stream().map(x-> x.result(k.getAndIncrement())).forEach(x -> {
+        statisticTests.stream().map(x -> x.result(k.getAndIncrement())).forEach(x -> {
             resTextArea.appendText("-----------------------------------------------------------------------------------------------------------------------\n");
             resTextArea.appendText(x.toString());
         });
@@ -1104,34 +1169,12 @@ public class TestGenController {
         pForm.getDialogStage().setTitle("ТЕСТИРОВАНИЕ ЗАКОНЧЕНО!");
     }
 
-    public void setPixels() {
-        GraphicsContext gc = graphTestCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, graphTestCanvas.getWidth(), graphTestCanvas.getHeight());
-        GraphicsContext gc1 = graphDopTestCanvas.getGraphicsContext2D();
-        gc1.clearRect(0, 0, graphTestCanvas.getWidth(), graphTestCanvas.getHeight());
-        //int size = numberSample.getNSampleMas() - 4;
-        int size = numberSample.getNSample() - 4;
-        if (size > 8388608) {
-            size = 8388608;
-        }
-        int max = (int) (Math.pow(2, numberSample.getCapacity()) - 1);
-        //int[] pixelsMas = numberSample.matrToMas();
-        int[] pixelsMas = numberSample.getSample()[0];
-        for (int i = 0; i < size; i++) {
-            gc.getPixelWriter().setColor(
-                    (int) (graphTestCanvas.getWidth() * (double) pixelsMas[i] / max),
-                    (int) (graphTestCanvas.getHeight() * (double) pixelsMas[i + 1] / max),
-                    new Color((double) pixelsMas[i + 4] / max,
-                            (double) pixelsMas[i + 3] / max,
-                            (double) pixelsMas[i + 2] / max, 1));
-            if (i != size - 1)
-                gc1.getPixelWriter().setColor(
-                        (int) (graphDopTestCanvas.getWidth() * 0.5 * ((double) pixelsMas[i] / max + (double) pixelsMas[i + 1] / max)),
-                        (int) (graphDopTestCanvas.getHeight() * 0.5 * ((double) pixelsMas[i + 1] / max + (double) pixelsMas[i + 2] / max)),
-                        new Color(0.5 * ((double) pixelsMas[i + 4] / max + (double) pixelsMas[i + 5] / max),
-                                0.5 * ((double) pixelsMas[i + 3] / max + (double) pixelsMas[i + 4] / max),
-                                0.5 * ((double) pixelsMas[i + 2] / max + (double) pixelsMas[i + 3] / max), 1));
-        }
+    // Метод для преобразования цвета в HEX-код
+    private String toHex(Color color) {
+        return String.format("#%02X%02X%02X",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255));
     }
 
     public void writeText(TestsSample testsSample) {

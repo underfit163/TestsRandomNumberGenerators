@@ -7,6 +7,7 @@ module TestNumGenerator {
     requires bit.lib4j;
     requires commons.math3;
     requires jtransforms;
+    requires org.fxyz3d.core;
 
     opens forms;
 }

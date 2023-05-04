@@ -102,9 +102,10 @@ public class SerialTest implements Test {
         }
         xi2Pvalue2 = xi2Pvalue2 / ((double) numberSample.getCountSample() / 10);
         xi2Pvalue2 = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue2 / 2);
+        paramsTest.getTestPval().put(getClass().getSimpleName(), false);
         if (xi2Pvalue1 >= paramsTest.getA() && xi2Pvalue2 >= paramsTest.getA()) {
             paramsTest.getTestPval().put(getClass().getSimpleName(), true);
-        } else paramsTest.getTestPval().put(getClass().getSimpleName(), false);
+        }
         //доля последовательностей прошедших тест с 1-a вероятностью должна попасть в этот интервал.
         paramsTest.getDols().put(getClass().getSimpleName(), (double) count / numberSample.getCountSample());
         if (paramsTest.getTestPval().get(getClass().getSimpleName())) {

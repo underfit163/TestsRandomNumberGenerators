@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="623.0" prefWidth="790.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="forms.TestGenController">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="623.0" prefWidth="790.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="forms.TestGenController">
   <tabs>
     <Tab fx:id="mainTab" text="Ввод параметров">
       <content>
@@ -146,7 +146,7 @@
         <content>
           <AnchorPane fx:id="grafAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <Canvas fx:id="graphTestCanvas" height="512.0" layoutX="139.0" layoutY="42.0" width="512.0" />
+                  <Canvas fx:id="graphTestCanvas" height="551.0" layoutX="120.0" layoutY="22.0" width="551.0" />
                </children>
             </AnchorPane>
         </content>
@@ -155,16 +155,16 @@
         <content>
           <AnchorPane fx:id="grafDopAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <Canvas fx:id="graphDopTestCanvas" height="512.0" layoutX="139.0" layoutY="42.0" width="512.0" />
+                  <Canvas fx:id="graphDopTestCanvas" height="528.0" layoutX="131.0" layoutY="33.0" width="528.0" />
                </children>
             </AnchorPane>
         </content>
       </Tab>
-      <Tab fx:id="diagramTab" disable="true" text="Гистограмма">
+      <Tab fx:id="diagramTab" disable="true" text="Гистограмма интервалов">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <StackedBarChart fx:id="diagramBarChart" layoutX="11.0" layoutY="12.0" prefHeight="572.0" prefWidth="768.0" title="Гистограмма частот">
+                  <StackedBarChart fx:id="diagramBarChart" prefHeight="594.0" prefWidth="790.0" title="Гистограмма частот">
                     <xAxis>
                       <CategoryAxis fx:id="intervalCategoryAxis" label="Интервалы" />
                     </xAxis>
@@ -175,6 +175,70 @@
                </children>
             </AnchorPane>
         </content>
+      </Tab>
+      <Tab fx:id="diagramBTab" disable="true" text="Гистограмма байт">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <StackedBarChart fx:id="diagramBBarChart" categoryGap="5.0" layoutY="89.0" prefHeight="416.0" prefWidth="790.0" title="Гистограмма распределения элементов последовательности">
+                     <xAxis>
+                        <CategoryAxis fx:id="intervalCategoryAxis11" label="Значения" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis fx:id="chastotaNumberAxis11" label="Количество" side="LEFT" />
+                     </yAxis>
+                  </StackedBarChart>
+               </children>
+            </AnchorPane>
+         </content>
+      </Tab>
+      <Tab fx:id="diagramSeriesTab" disable="true" text="Тест серий">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <StackedBarChart fx:id="series01BarChart" layoutY="4.0" prefHeight="171.0" prefWidth="790.0" title="Проверка 0 и 1">
+                     <xAxis>
+                        <CategoryAxis fx:id="intervalCategoryAxis1" label="Значения" prefHeight="25.0" prefWidth="698.0" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis fx:id="chastotaNumberAxis1" label="Количество" side="LEFT" />
+                     </yAxis>
+                  </StackedBarChart>
+                  <StackedBarChart fx:id="series01BarChart1" layoutY="172.0" prefHeight="217.0" prefWidth="790.0" title="Проверка серий двоек">
+                     <xAxis>
+                        <CategoryAxis fx:id="intervalCategoryAxis12" label="Значения" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis fx:id="chastotaNumberAxis12" label="Количество" side="LEFT" />
+                     </yAxis>
+                  </StackedBarChart>
+                  <StackedBarChart fx:id="series01BarChart2" categoryGap="5.0" layoutX="-1.0" layoutY="387.0" prefHeight="205.0" prefWidth="790.0" title="Проверка серий троек">
+                     <xAxis>
+                        <CategoryAxis fx:id="intervalCategoryAxis121" label="Значения" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis fx:id="chastotaNumberAxis121" label="Количество" side="LEFT" />
+                     </yAxis>
+                  </StackedBarChart>
+               </children>
+            </AnchorPane>
+         </content>
+      </Tab>
+      <Tab fx:id="diagramMonotonyTab" disable="true" text="Тест на монотонность">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <StackedBarChart fx:id="diagramMonotonyBarChart" categoryGap="5.0" layoutY="122.0" prefHeight="350.0" prefWidth="790.0" title="Проверка на монотонность">
+                     <xAxis>
+                        <CategoryAxis fx:id="intervalCategoryAxis2" label="Номер участка в последовательности" />
+                     </xAxis>
+                     <yAxis>
+                        <NumberAxis fx:id="chastotaNumberAxis2" label="Количество" side="LEFT" />
+                     </yAxis>
+                  </StackedBarChart>
+               </children>
+            </AnchorPane>
+         </content>
       </Tab>
   </tabs>
 </TabPane>

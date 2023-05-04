@@ -105,9 +105,10 @@ public class RankTest implements Test {
         }
         xi2Pvalue = xi2Pvalue / ((double) numberSample.getCountSample() / 10);
         xi2Pvalue = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue / 2);
+        paramsTest.getTestPval().put(getClass().getSimpleName(), false);
         if (xi2Pvalue >= paramsTest.getA()) {
             paramsTest.getTestPval().put(getClass().getSimpleName(), true);
-        } else paramsTest.getTestPval().put(getClass().getSimpleName(), false);
+        }
         //доля последовательностей прошедших тест с 1-a вероятностью должна попасть в этот интервал.
         paramsTest.getDols().put(getClass().getSimpleName(), (double) count / numberSample.getCountSample());
         if (paramsTest.getTestPval().get(getClass().getSimpleName())) {
