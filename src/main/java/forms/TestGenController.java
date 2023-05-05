@@ -77,6 +77,10 @@ public class TestGenController {
     public StackedBarChart<String, Number> series01BarChart2;
     public Tab diagramMonotonyTab;
     public StackedBarChart<String, Number> diagramMonotonyBarChart;
+    public Tab diagramAutocorrelationTab;
+    public StackedBarChart<String, Number> diagramAutocorrelationBarChart;
+    public CategoryAxis autocorrelationXAxis;
+    public NumberAxis autocorrelationYAxis;
     private File fileObject;
     private ChangeListener<Integer> changeL;
     private int k = 0;
@@ -1053,6 +1057,7 @@ public class TestGenController {
         diagramTab.setDisable(false);
         diagramBTab.setDisable(false);
         diagramMonotonyTab.setDisable(false);
+        diagramAutocorrelationTab.setDisable(false);
         diagramSeriesTab.setDisable(false);
         graphicTab.setDisable(false);
         graphicDopTab.setDisable(false);
@@ -1101,11 +1106,13 @@ public class TestGenController {
                 new HistogramDistributionByteSequenceTest(numberSample);
         SeriesGraphicTest seriesGraphicTest = new SeriesGraphicTest(numberSample);
         MonotonyTest monotonyTest = new MonotonyTest(numberSample);
+        AutocorrelationTest autocorrelationTest = new AutocorrelationTest(numberSample);
 
         graphicTests.add(histogramDistributionByteSequenceTest);
         graphicTests.add(new DistributionOnPlaneTest(numberSample, graphTestCanvas, graphDopTestCanvas));
         graphicTests.add(seriesGraphicTest);
         graphicTests.add(monotonyTest);
+        graphicTests.add(autocorrelationTest);
 
         testsSample.runStatisticTest(statisticTests);
         testsSample.runGraphicTest(graphicTests);
@@ -1148,17 +1155,31 @@ public class TestGenController {
         monotonyTest.getMonotonySeries().entrySet().stream().limit(t).forEach(entry -> {
             dataSeries6.getData().add(new XYChart.Data<>(String.valueOf(entry.getKey()), entry.getValue()));
         });
-        dataSeries6.getData().forEach(data -> {
-            int index = dataSeries6.getData().indexOf(data);
-            Color color = index % 2 == 0 ? Color.RED : Color.BLUE; // Чередование цветов для четных и нечетных элементов
-            Node node = data.getNode();
-            if (node != null) { // Добавляем проверку на null
-                node.setStyle("-fx-background-color: " + toHex(color) + ", black;");
-                node.setStyle("-fx-background-insets: -1.4, 0;");
-            }
-        });
-        dataSeries6.setName("Участки невозрастания и неубывания элементов последовательности");
         diagramMonotonyBarChart.getData().add(dataSeries6);
+
+        AtomicInteger index = new AtomicInteger();
+        diagramMonotonyBarChart.lookupAll(".default-color0.chart-bar")
+                .forEach(node -> {
+                    Color color = index.get() % 2 == 0 ? Color.RED : Color.BLUE;
+                    node.setStyle("-fx-bar-fill: " + toHex(color) + ", black;");
+                    index.getAndIncrement();
+                });
+
+        autocorrelationYAxis.setAutoRanging(false);
+        autocorrelationYAxis.setLowerBound(-0.5);
+        autocorrelationYAxis.setUpperBound(0.5);
+        XYChart.Series<String, Number> dataSeries7 = new XYChart.Series<>();
+        autocorrelationTest.getAutocorrelationSeries().forEach((key, value) -> dataSeries7.getData().add(new XYChart.Data<>(String.valueOf(key), value)));
+        diagramAutocorrelationBarChart.getData().add(dataSeries7);
+        AtomicInteger autocorrelationI = new AtomicInteger(0);
+        diagramAutocorrelationBarChart.lookupAll(".default-color0.chart-bar")
+                .forEach(node -> {
+                    double y = dataSeries7.getData().get(autocorrelationI.get()).getYValue().doubleValue();
+                    if (y < 0) {
+                        node.getStyleClass().add("negative");
+                    }
+                    autocorrelationI.getAndIncrement();
+                });
 
         AtomicInteger k = new AtomicInteger(1);
         statisticTests.stream().map(x -> x.result(k.getAndIncrement())).forEach(x -> {
