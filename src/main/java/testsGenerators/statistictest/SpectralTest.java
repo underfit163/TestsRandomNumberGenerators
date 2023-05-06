@@ -14,24 +14,35 @@ import java.util.stream.IntStream;
 public class SpectralTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
+    private double[][] m;
+
+    private double upperBound;
 
     public SpectralTest(NumberSample numberSample, ParamsTest paramsTest) {
         this.numberSample = numberSample;
         this.paramsTest = paramsTest;
     }
 
+    public double[][] getM() {
+        return m;
+    }
+
+    public double getUpperBound() {
+        return upperBound;
+    }
+
     @Override
     public void runTest() {
         int n = numberSample.getBitSetList().get(0).length();
-        if (n > 500_000) n = 500_000;
+        if (n > 1_000_000) n = 1_000_000;
         //double[] percentile = new double[numberSample.getCountSample()];
         double[] N_l = new double[numberSample.getCountSample()];
         double N_o = 0.95 * n / 2.0;
         double[] d = new double[numberSample.getCountSample()];
 
-        double upperBound = Math.sqrt(3 * n);
+        upperBound = Math.sqrt(3 * n);
         double[][] X = new double[numberSample.getCountSample()][n];
-        double[][] m = new double[numberSample.getCountSample()][n / 2 + 1];
+        m = new double[numberSample.getCountSample()][n / 2 + 1];
         int[] counts = new int[numberSample.getCountSample()];
         double[] pValue = new double[numberSample.getCountSample()];
 

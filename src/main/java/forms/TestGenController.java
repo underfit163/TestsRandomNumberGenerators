@@ -8,7 +8,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.StackedBarChart;
 import javafx.scene.chart.XYChart;
@@ -60,8 +59,6 @@ public class TestGenController {
     public Button testButton;
     public Label infoLabel;
     public CheckBox loadCheckBox;
-    public CategoryAxis intervalCategoryAxis;
-    public NumberAxis chastotaNumberAxis;
     public Tab graphicDopTab;
     public Canvas graphDopTestCanvas;
     public AnchorPane grafDopAnchorPane;
@@ -79,8 +76,9 @@ public class TestGenController {
     public StackedBarChart<String, Number> diagramMonotonyBarChart;
     public Tab diagramAutocorrelationTab;
     public StackedBarChart<String, Number> diagramAutocorrelationBarChart;
-    public CategoryAxis autocorrelationXAxis;
     public NumberAxis autocorrelationYAxis;
+    public Tab diagramSpectralTab;
+    public StackedBarChart<String, Number> diagramSpectralBarChart;
     private File fileObject;
     private ChangeListener<Integer> changeL;
     private int k = 0;
@@ -1059,9 +1057,13 @@ public class TestGenController {
         diagramMonotonyTab.setDisable(false);
         diagramAutocorrelationTab.setDisable(false);
         diagramSeriesTab.setDisable(false);
+        diagramSpectralTab.setDisable(false);
         graphicTab.setDisable(false);
         graphicDopTab.setDisable(false);
         resTab.setDisable(false);
+        diagramMonotonyBarChart.getData().clear();
+        diagramAutocorrelationBarChart.getData().clear();
+        diagramSpectralBarChart.getData().clear();
         diagramBarChart.getData().clear();
         diagramBBarChart.getData().clear();
         series01BarChart.getData().clear();
@@ -1085,7 +1087,8 @@ public class TestGenController {
         statisticTests.add(new FrequencyMonobitTest(numberSample, paramsTest));
         statisticTests.add(new FrequencyLongSequencesTest(numberSample, paramsTest));
         statisticTests.add(new SerialTest(numberSample, paramsTest));
-        statisticTests.add(new SpectralTest(numberSample, paramsTest));
+        SpectralTest spectralTest = new SpectralTest(numberSample, paramsTest);
+        statisticTests.add(spectralTest);
         statisticTests.add(new ApproximateEntropyTest(numberSample, paramsTest, 3));
         statisticTests.add(new LinearComplexityTest(numberSample, paramsTest, 500));
         statisticTests.add(new RankTest(numberSample, paramsTest, 32));
@@ -1125,11 +1128,12 @@ public class TestGenController {
         diagramBarChart.getData().add(dataSeries1);
 
         XYChart.Series<String, Number> dataSeries2 = new XYChart.Series<>();
-        histogramDistributionByteSequenceTest.getHeights().forEach((key, value) -> {
-            if (key % 5 == 0) dataSeries2.getData().add(new XYChart.Data<>(String.valueOf(key), value));
-        });
+        histogramDistributionByteSequenceTest.getHeights().forEach((key, value) ->
+                dataSeries2.getData().add(new XYChart.Data<>(String.valueOf(key), value)));
         dataSeries2.setName("Количество чисел");
         diagramBBarChart.getData().add(dataSeries2);
+        double totalBBarWidth = diagramBBarChart.getXAxis().getWidth() * diagramBBarChart.getData().size() * 5;
+        diagramBBarChart.setMinWidth(totalBBarWidth);
 
         //01
         XYChart.Series<String, Number> dataSeries3 = new XYChart.Series<>();
@@ -1151,10 +1155,9 @@ public class TestGenController {
         series01BarChart2.getData().add(dataSeries5);
 
         XYChart.Series<String, Number> dataSeries6 = new XYChart.Series<>();
-        int t = 100;
-        monotonyTest.getMonotonySeries().entrySet().stream().limit(t).forEach(entry -> {
-            dataSeries6.getData().add(new XYChart.Data<>(String.valueOf(entry.getKey()), entry.getValue()));
-        });
+        int t = 1000;
+        monotonyTest.getMonotonySeries().entrySet().stream().limit(t).forEach(entry ->
+                dataSeries6.getData().add(new XYChart.Data<>(String.valueOf(entry.getKey()), entry.getValue())));
         diagramMonotonyBarChart.getData().add(dataSeries6);
 
         AtomicInteger index = new AtomicInteger();
@@ -1164,6 +1167,10 @@ public class TestGenController {
                     node.setStyle("-fx-bar-fill: " + toHex(color) + ", black;");
                     index.getAndIncrement();
                 });
+
+        double totalMonotonyWidth = diagramMonotonyBarChart.getXAxis().getWidth() * diagramMonotonyBarChart.getData().size() * 10;
+        diagramMonotonyBarChart.setMinWidth(totalMonotonyWidth);
+        diagramMonotonyBarChart.setPrefWidth(totalMonotonyWidth);
 
         autocorrelationYAxis.setAutoRanging(false);
         autocorrelationYAxis.setLowerBound(-0.5);
@@ -1180,6 +1187,34 @@ public class TestGenController {
                     }
                     autocorrelationI.getAndIncrement();
                 });
+        double totalAutocorrelationWidth = diagramAutocorrelationBarChart.getXAxis().getWidth() * diagramAutocorrelationBarChart.getData().size() * 10;
+        diagramAutocorrelationBarChart.setMinWidth(totalAutocorrelationWidth);
+        diagramAutocorrelationBarChart.setPrefWidth(totalAutocorrelationWidth);
+
+        XYChart.Series<String, Number> dataSeries8 = new XYChart.Series<>();
+        int l = 1;
+        for (double v : spectralTest.getM()[0]) {
+            dataSeries8.getData().add(new XYChart.Data<>(String.valueOf(l), v));
+            l++;
+            if(l >= 1001) break;
+        }
+        diagramSpectralBarChart.getData().add(dataSeries8);
+
+        AtomicInteger spectralI = new AtomicInteger(0);
+        diagramSpectralBarChart.lookupAll(".default-color0.chart-bar")
+                .forEach(node -> {
+                    double y = dataSeries8.getData().get(spectralI.get()).getYValue().doubleValue();
+                    if (y >= spectralTest.getUpperBound()) {
+                        node.setStyle("-fx-bar-fill: " + toHex(Color.BLACK) + ", white;");
+                    }
+                    spectralI.getAndIncrement();
+                });
+        diagramSpectralBarChart.setLegendVisible(true);
+        dataSeries8.setName("Средняя длина гармоники равна " + spectralTest.getUpperBound() + "\n Превышение данного показателя выделено черным");
+        double totalSpectralWidth = diagramSpectralBarChart.getXAxis().getWidth() * diagramSpectralBarChart.getData().size() * 5;
+        diagramSpectralBarChart.setMinWidth(totalSpectralWidth);
+        diagramSpectralBarChart.setPrefWidth(totalSpectralWidth);
+
 
         AtomicInteger k = new AtomicInteger(1);
         statisticTests.stream().map(x -> x.result(k.getAndIncrement())).forEach(x -> {

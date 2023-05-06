@@ -23,7 +23,8 @@ public class AutocorrelationTest implements GraphicTest {
     @Override
     public void runTest() {
         BitSet bitSet = numberSample.getBitSetList().get(0);
-        IntStream.range(0, 100).parallel().forEach(j -> {
+        int len = Math.min(bitSet.length(), 1000);
+        IntStream.range(0, len + 1).parallel().forEach(j -> {
             int cj = 0;
             for (int i = 0; i < bitSet.length(); i++) {
                 cj += (bitSet.get(i) ? 1 : -1) * (bitSet.get((i + j) % bitSet.length()) ? 1 : -1);
