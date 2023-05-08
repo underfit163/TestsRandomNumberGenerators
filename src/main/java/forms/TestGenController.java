@@ -91,8 +91,9 @@ public class TestGenController {
         loadComboBox.getSelectionModel().select("Программный");
         genNumComboBox.getItems().addAll("Алгоритм_ГОСТ_ИСО_24153", "GFSR_генератор_с_3_параметрами",
                 "GFSR_генератор_с_5_параметрами", "Генератор_Таусворта", "Генератор_Твистера", "LCG_генератор_V1",
-                "LCG_генератор_V2", "Мультипликативный_генератор_V1", "Мультипликативный_генератор_V2", "Мультипликативный_генератор_V3", "Мультипликативный_генератор_V4", "Random_генератор", "SecureRandom_генератор",
-                "SplittableRandom_генератор");
+                "LCG_генератор_V2", "Мультипликативный_генератор_V1", "Мультипликативный_генератор_V2",
+                "Мультипликативный_генератор_V3", "Мультипликативный_генератор_V4", "Мультипликативный_генератор_V5",
+                "KISS_генератор", "Random_генератор", "SecureRandom_генератор", "SplittableRandom_генератор");
         genNumComboBox.getSelectionModel().select("LCG_генератор_V1");
         initNumComboBox.getItems().addAll("Вручную", "Генератор начального числа", "Значение по умолчанию");
         initNumComboBox.getSelectionModel().select("Вручную");
@@ -100,11 +101,11 @@ public class TestGenController {
         capacityNumSpinner.setValueFactory(capacityNumValue);
         SpinnerValueFactory<Integer> sizeSampleValue = new SpinnerValueFactory.IntegerSpinnerValueFactory(100, Integer.MAX_VALUE, 131072, 2);
         sizeSampleSpinner.setValueFactory(sizeSampleValue);
-        SpinnerValueFactory<Integer> numberSamplesValue = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 4096, 100);
+        SpinnerValueFactory<Integer> numberSamplesValue = new SpinnerValueFactory.IntegerSpinnerValueFactory(2, 4096, 100);
         numberSamplesSpinner.setValueFactory(numberSamplesValue);
         SpinnerValueFactory<Integer> initNumberValue = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, Integer.MAX_VALUE, 19660809);
         initNumberSpinner.setValueFactory(initNumberValue);
-        SpinnerValueFactory<Double> aSpinnerValue = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.001, 0.05, 0.01, 0.01);
+        SpinnerValueFactory<Double> aSpinnerValue = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.001, 0.05, 0.01, 0.1);
         aSpinner.setValueFactory(aSpinnerValue);
         genLabel.setVisible(true);
         genNumComboBox.setVisible(true);
@@ -841,6 +842,100 @@ public class TestGenController {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
                     }
+                    case "Мультипликативный_генератор_V5": {
+                        MultiplicativeGeneratorV5 multiplicativeGeneratorV5 = new MultiplicativeGeneratorV5();
+                        switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
+                            case "Вручную":
+                                if (initNumberSpinner.getValue() != null) {
+                                    multiplicativeGeneratorV5.pmSrand(initNumberSpinner.getValue());
+                                } else {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                                    alert.setTitle("Ошибка!");
+                                    alert.setHeaderText("Ошибка заполнения полей!");
+                                    alert.setContentText("Заполните все поля на странице ввода");
+                                    alert.showAndWait();
+                                }
+                                break;
+                            case "Генератор начального числа":
+                                try {
+                                    multiplicativeGeneratorV5.pmSrand(SeedGenerator.SeedGen());
+                                } catch (ParseException e) {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                                    alert.setTitle("Ошибка!");
+                                    alert.setHeaderText("Ошибка генерации начального числа!");
+                                    alert.showAndWait();
+                                }
+                                break;
+                            case "Значение по умолчанию":
+                                multiplicativeGeneratorV5.pmSrand(19660809);
+                                break;
+                        }
+                        for (int i = 0; i < numberSample.getCountSample(); i++) {
+                            for (int j = 0; j < numberSample.getNSample(); j++) {
+                                numberSample.setItemSample(i, j, multiplicativeGeneratorV5.pmRand(numberSample.getCapacity()));
+                                if (numberSample.getNSampleMas() <= size) {
+                                    numsRand.add(numberSample.getItemSample(i, j));
+                                }
+                                if (loadCheckBox.isSelected()) {
+                                    assert pw != null;
+                                    pw.println(numberSample.getItemSample(i, j));
+                                }
+                            }
+                        }
+                        if (numberSample.getNSampleMas() <= size) {
+                            infoLabel.setText("Сгенерированные случайные числа:");
+                            randListView.setItems(numsRand);
+                        } else {
+                            infoLabel.setText("Выборка огромная, загружена только в массив");
+                        }
+                    }
+                    case "KISS_генератор": {
+                        KissGenerator kissGenerator = new KissGenerator();
+                        switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
+                            case "Вручную":
+                                if (initNumberSpinner.getValue() != null) {
+                                    kissGenerator.jkiss92Srand(initNumberSpinner.getValue());
+                                } else {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                                    alert.setTitle("Ошибка!");
+                                    alert.setHeaderText("Ошибка заполнения полей!");
+                                    alert.setContentText("Заполните все поля на странице ввода");
+                                    alert.showAndWait();
+                                }
+                                break;
+                            case "Генератор начального числа":
+                                try {
+                                    kissGenerator.jkiss92Srand(SeedGenerator.SeedGen());
+                                } catch (ParseException e) {
+                                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                                    alert.setTitle("Ошибка!");
+                                    alert.setHeaderText("Ошибка генерации начального числа!");
+                                    alert.showAndWait();
+                                }
+                                break;
+                            case "Значение по умолчанию":
+                                kissGenerator.jkiss92Srand(19660809);
+                                break;
+                        }
+                        for (int i = 0; i < numberSample.getCountSample(); i++) {
+                            for (int j = 0; j < numberSample.getNSample(); j++) {
+                                numberSample.setItemSample(i, j, kissGenerator.kiss9231(numberSample.getCapacity()));
+                                if (numberSample.getNSampleMas() <= size) {
+                                    numsRand.add(numberSample.getItemSample(i, j));
+                                }
+                                if (loadCheckBox.isSelected()) {
+                                    assert pw != null;
+                                    pw.println(numberSample.getItemSample(i, j));
+                                }
+                            }
+                        }
+                        if (numberSample.getNSampleMas() <= size) {
+                            infoLabel.setText("Сгенерированные случайные числа:");
+                            randListView.setItems(numsRand);
+                        } else {
+                            infoLabel.setText("Выборка огромная, загружена только в массив");
+                        }
+                    }
                     case "Random_генератор": {
                         Random r = new Random();
                         switch (initNumComboBox.getSelectionModel().getSelectedItem()) {
@@ -1085,7 +1180,6 @@ public class TestGenController {
         statisticTests.add(new CumulativeSumsTest(numberSample, paramsTest));
         statisticTests.add(new RunTest(numberSample, paramsTest));
         statisticTests.add(new FrequencyMonobitTest(numberSample, paramsTest));
-        statisticTests.add(new FrequencyLongSequencesTest(numberSample, paramsTest));
         statisticTests.add(new SerialTest(numberSample, paramsTest));
         SpectralTest spectralTest = new SpectralTest(numberSample, paramsTest);
         statisticTests.add(spectralTest);
@@ -1099,7 +1193,7 @@ public class TestGenController {
         statisticTests.add(new NonOverlappingTemplateMatchingTest(numberSample, paramsTest, 6, 8));
         statisticTests.add(new StackBooksTest(numberSample, paramsTest, 4));
         statisticTests.add(new PokerTest(numberSample, paramsTest));
-        statisticTests.add(new KolmogorovSmirnovTest(numberSample, paramsTest));
+        //statisticTests.add(new KolmogorovSmirnovTest(numberSample, paramsTest));
 
         List<GraphicTest> graphicTests = new ArrayList<>();
         HistogramDistributionSequenceTest histogramDistributionSequenceTest
@@ -1132,7 +1226,7 @@ public class TestGenController {
                 dataSeries2.getData().add(new XYChart.Data<>(String.valueOf(key), value)));
         dataSeries2.setName("Количество чисел");
         diagramBBarChart.getData().add(dataSeries2);
-        double totalBBarWidth = diagramBBarChart.getXAxis().getWidth() * diagramBBarChart.getData().size() * 5;
+        double totalBBarWidth = 800 * diagramBBarChart.getData().size() * 5;
         diagramBBarChart.setMinWidth(totalBBarWidth);
 
         //01
@@ -1168,7 +1262,7 @@ public class TestGenController {
                     index.getAndIncrement();
                 });
 
-        double totalMonotonyWidth = diagramMonotonyBarChart.getXAxis().getWidth() * diagramMonotonyBarChart.getData().size() * 10;
+        double totalMonotonyWidth = 800 * diagramMonotonyBarChart.getData().size() * 10;
         diagramMonotonyBarChart.setMinWidth(totalMonotonyWidth);
         diagramMonotonyBarChart.setPrefWidth(totalMonotonyWidth);
 
@@ -1187,7 +1281,7 @@ public class TestGenController {
                     }
                     autocorrelationI.getAndIncrement();
                 });
-        double totalAutocorrelationWidth = diagramAutocorrelationBarChart.getXAxis().getWidth() * diagramAutocorrelationBarChart.getData().size() * 10;
+        double totalAutocorrelationWidth = 800 * diagramAutocorrelationBarChart.getData().size() * 10;
         diagramAutocorrelationBarChart.setMinWidth(totalAutocorrelationWidth);
         diagramAutocorrelationBarChart.setPrefWidth(totalAutocorrelationWidth);
 
@@ -1211,7 +1305,7 @@ public class TestGenController {
                 });
         diagramSpectralBarChart.setLegendVisible(true);
         dataSeries8.setName("Средняя длина гармоники равна " + spectralTest.getUpperBound() + "\n Превышение данного показателя выделено черным");
-        double totalSpectralWidth = diagramSpectralBarChart.getXAxis().getWidth() * diagramSpectralBarChart.getData().size() * 5;
+        double totalSpectralWidth = 800 * diagramSpectralBarChart.getData().size() * 5;
         diagramSpectralBarChart.setMinWidth(totalSpectralWidth);
         diagramSpectralBarChart.setPrefWidth(totalSpectralWidth);
 

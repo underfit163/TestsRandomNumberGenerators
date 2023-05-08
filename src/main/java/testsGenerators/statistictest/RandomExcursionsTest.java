@@ -1,9 +1,13 @@
 package testsGenerators.statistictest;
 
+import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.special.Erf;
 import org.apache.commons.math3.special.Gamma;
+import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import sample.NumberSample;
 import testsGenerators.ParamsTest;
+
+import java.util.Arrays;
 
 /**
  * 15)	Проверка случайных отклонений (Random excursion test).
@@ -57,34 +61,44 @@ public class RandomExcursionsTest implements Test {
                     otherCount++;
                 }
             }
-            if (otherCount >= stateX.length * 0.9) count++;
+            if (otherCount >= stateX.length * 0.95) count++;
         }
-        //Анализ числа появлений значений P-value
-        int[] vPvalue = new int[10];
-        double left;
-        double right;
-        double value;
-        for (int k = 0; k < numberSample.getCountSample(); k++) {
-            value = pValue[k][0];
-            for (int i = 1; i <= vPvalue.length; i++) {
-                left = (double) (i - 1) / 10;
-                right = (double) i / 10;
-                if (i == 10 && value == right) {
-                    vPvalue[i - 1]++;
-                }
-                if (left <= value && value < right) {
-                    vPvalue[i - 1]++;
-                    break;
-                }
+        KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
+        double xi2Pvalue;
+        double[] arrPVal = new double[numberSample.getCountSample() * pValue[0].length];
+        for (int i = 0; i < numberSample.getCountSample(); i++) {
+            for (int j = 0; j < pValue[i].length; j++) {
+                arrPVal[i * pValue[i].length + j] = pValue[i][j];
             }
         }
-
-        double xi2Pvalue = 0;
-        for (int j : vPvalue) {
-            xi2Pvalue += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
-        }
-        xi2Pvalue = xi2Pvalue / ((double) numberSample.getCountSample() / 10);
-        xi2Pvalue = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue / 2);
+        arrPVal = Arrays.stream(arrPVal).sorted().toArray();
+        xi2Pvalue = ksTest.kolmogorovSmirnovTest(new UniformRealDistribution(0, 1), arrPVal);
+//        //Анализ числа появлений значений P-value
+//        int[] vPvalue = new int[10];
+//        double left;
+//        double right;
+//        double value;
+//        for (int k = 0; k < numberSample.getCountSample(); k++) {
+//            value = pValue[k][0];
+//            for (int i = 1; i <= vPvalue.length; i++) {
+//                left = (double) (i - 1) / 10;
+//                right = (double) i / 10;
+//                if (i == 10 && value == right) {
+//                    vPvalue[i - 1]++;
+//                }
+//                if (left <= value && value < right) {
+//                    vPvalue[i - 1]++;
+//                    break;
+//                }
+//            }
+//        }
+//
+//        double xi2Pvalue = 0;
+//        for (int j : vPvalue) {
+//            xi2Pvalue += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
+//        }
+//        xi2Pvalue = xi2Pvalue / ((double) numberSample.getCountSample() / 10);
+//        xi2Pvalue = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue / 2);
         paramsTest.getTestPval().put(getClass().getSimpleName(), false);
         if (xi2Pvalue >= paramsTest.getA()) {
             paramsTest.getTestPval().put(getClass().getSimpleName(), true);

@@ -18,7 +18,7 @@ public class TwisterGenerator {
     /* инициализация mt [P] с начальным значением a */
     public void initGenrand(long s) {
         mt[0] = s & 0xffffffffL;
-        //начальное    заполнение
+        //начальноезаполнение
         for (mti = 1; mti < p; mti++) {
             mt[mti] = (1664525L * mt[mti - 1] + 1L);
             mt[mti] &= 0xffffffffL;

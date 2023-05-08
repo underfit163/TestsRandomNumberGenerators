@@ -1,8 +1,12 @@
 package testsGenerators.statistictest;
 
+import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.special.Gamma;
+import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import sample.NumberSample;
 import testsGenerators.ParamsTest;
+
+import java.util.Arrays;
 
 /*
 2)	Проверка гипотезы равномерного распределения случайной величины с помощью доверительного интервала.
@@ -33,33 +37,37 @@ public class UniformDistributionChiSquareTest extends UniformDistributionTest im
                 xi2[i] += Math.pow(getFrequencyCountDouble()[i][j] - (double) numberSample.getNSample() / n, 2) / ((double) numberSample.getNSample() / n);
             }
             pValue[i] = Gamma.regularizedGammaQ((double) (n - 1) / 2, xi2[i] / 2);
-            if (paramsTest.getA() <= pValue[i]) {
+            if (paramsTest.getA() <= pValue[i] && pValue[i] <= 1 - paramsTest.getA()) {
                 count++;
             }
         }
-        //Анализ числа появлений значений P-value
-        int[] vPvalue = new int[10];
-        double left;
-        double right;
-        for (double v : pValue) {
-            for (int i = 1; i <= vPvalue.length; i++) {
-                left = (double) (i - 1) / 10;
-                right = (double) i / 10;
-                if (i == 10 && v == right) {
-                    vPvalue[i - 1]++;
-                }
-                if (left <= v && v < right) {
-                    vPvalue[i - 1]++;
-                    break;
-                }
-            }
-        }
-        double xi2Pvalue = 0;
-        for (int j : vPvalue) {
-            xi2Pvalue += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
-        }
-        xi2Pvalue = xi2Pvalue / ((double) numberSample.getCountSample() / 10);
-        xi2Pvalue = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue / 2);
+        KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
+        Arrays.sort(pValue);
+        double xi2Pvalue = ksTest.kolmogorovSmirnovTest(new UniformRealDistribution(0, 1), pValue);
+//        //Анализ числа появлений значений P-value
+//        if(xi2Pvalue) {
+//            int[] vPvalue = new int[10];
+//            double left;
+//            double right;
+//            for (double value : pValue) {
+//                for (int i = 1; i <= vPvalue.length; i++) {
+//                    left = (double) (i - 1) / 10;
+//                    right = (double) i / 10;
+//                    if (i == 10 && value == right) {
+//                        vPvalue[i - 1]++;
+//                    }
+//                    if (left <= value && value < right) {
+//                        vPvalue[i - 1]++;
+//                        break;
+//                    }
+//                }
+//            }
+//            for (int j : vPvalue) {
+//                xi2Pvalue += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
+//            }
+//            xi2Pvalue = xi2Pvalue / ((double) numberSample.getCountSample() / 10);
+//            xi2Pvalue = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue / 2);
+//        }
         paramsTest.getTestPval().put(getClass().getSimpleName(), false);
         if (xi2Pvalue >= paramsTest.getA()) {
             paramsTest.getTestPval().put(getClass().getSimpleName(), true);

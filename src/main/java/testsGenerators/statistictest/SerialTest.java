@@ -62,7 +62,8 @@ public class SerialTest implements Test {
             pValue[i][0] = Gamma.regularizedGammaQ(Math.pow(2, m - 2), deltFi21[i] / 2);
             pValue[i][1] = Gamma.regularizedGammaQ(Math.pow(2, m - 3), deltFi22[i] / 2);
 
-            if (paramsTest.getA() <= pValue[i][0] && paramsTest.getA() <= pValue[i][1]) {
+            if (paramsTest.getA() <= pValue[i][0] && pValue[i][0] <= 1 - paramsTest.getA()
+                    && paramsTest.getA() <= pValue[i][1]) {
                 count++;
             }
             sum32 = 0;

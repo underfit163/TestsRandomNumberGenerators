@@ -1,9 +1,12 @@
 package testsGenerators.statistictest;
 
+import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.special.Gamma;
 import sample.NumberSample;
 import testsGenerators.ParamsTest;
+import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /**
@@ -15,6 +18,8 @@ public class ApproximateEntropyTest implements Test {
     private final int m;
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
+
+    private double[] pValue;
 
     /**
      * @param m длина каждого блока (пересекающиеся серии длиной m)
@@ -30,7 +35,7 @@ public class ApproximateEntropyTest implements Test {
     public void runTest() {
         int seqLength = numberSample.getBitSetList().get(0).length();
         double[] chiSquared = new double[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
+        pValue = new double[numberSample.getCountSample()];
 
         IntStream.range(0, numberSample.getCountSample()).parallel().forEach(t -> {
             int r = 0;
@@ -76,29 +81,33 @@ public class ApproximateEntropyTest implements Test {
                 count++;
             }
         }
-        //Анализ числа появлений значений P-value
-        int[] vPvalue = new int[10];
-        double left;
-        double right;
-        for (double value : pValue) {
-            for (int i = 1; i <= vPvalue.length; i++) {
-                left = (double) (i - 1) / 10;
-                right = (double) i / 10;
-                if (i == 10 && value == right) {
-                    vPvalue[i - 1]++;
-                }
-                if (left <= value && value < right) {
-                    vPvalue[i - 1]++;
-                    break;
-                }
-            }
-        }
-        double xi2Pvalue = 0;
-        for (int j : vPvalue) {
-            xi2Pvalue += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
-        }
-        xi2Pvalue = xi2Pvalue / ((double) numberSample.getCountSample() / 10);
-        xi2Pvalue = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue / 2);
+        KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
+        Arrays.sort(pValue);
+        double xi2Pvalue = ksTest.kolmogorovSmirnovTest(new UniformRealDistribution(0, 1), pValue);
+//        //Анализ числа появлений значений P-value
+//        if(xi2Pvalue) {
+//            int[] vPvalue = new int[10];
+//            double left;
+//            double right;
+//            for (double value : pValue) {
+//                for (int i = 1; i <= vPvalue.length; i++) {
+//                    left = (double) (i - 1) / 10;
+//                    right = (double) i / 10;
+//                    if (i == 10 && value == right) {
+//                        vPvalue[i - 1]++;
+//                    }
+//                    if (left <= value && value < right) {
+//                        vPvalue[i - 1]++;
+//                        break;
+//                    }
+//                }
+//            }
+//            for (int j : vPvalue) {
+//                xi2Pvalue += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
+//            }
+//            xi2Pvalue = xi2Pvalue / ((double) numberSample.getCountSample() / 10);
+//            xi2Pvalue = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue / 2);
+//        }
         paramsTest.getTestPval().put(getClass().getSimpleName(), false);
         if (xi2Pvalue >= paramsTest.getA()) {
             paramsTest.getTestPval().put(getClass().getSimpleName(), true);
@@ -115,6 +124,7 @@ public class ApproximateEntropyTest implements Test {
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Проверка аппроксимированной энтропии:\n");
+        //stringBuilder.append("Значения p-value последовательностей: ").append(Arrays.toString(pValue)).append(" должны быть больше ").append(paramsTest.getA()).append("\n");;
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
@@ -10,6 +11,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.Tab?>
@@ -146,7 +148,7 @@
         <content>
           <AnchorPane fx:id="grafAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <Canvas fx:id="graphTestCanvas" height="551.0" layoutX="120.0" layoutY="22.0" width="551.0" />
+                  <Canvas fx:id="graphTestCanvas" height="550.0" layoutX="120.0" layoutY="22.0" width="550.0" />
                </children>
             </AnchorPane>
         </content>
@@ -155,7 +157,7 @@
         <content>
           <AnchorPane fx:id="grafDopAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <Canvas fx:id="graphDopTestCanvas" height="528.0" layoutX="131.0" layoutY="33.0" width="528.0" />
+                  <Canvas fx:id="graphDopTestCanvas" height="550.0" layoutX="120.0" layoutY="22.0" width="550.0" />
                </children>
             </AnchorPane>
         </content>
@@ -166,10 +168,10 @@
                <children>
                   <StackedBarChart fx:id="diagramBarChart" prefHeight="594.0" prefWidth="790.0" title="Гистограмма частот">
                     <xAxis>
-                      <CategoryAxis fx:id="intervalCategoryAxis" label="Интервалы" />
+                      <CategoryAxis label="Интервалы" />
                     </xAxis>
                     <yAxis>
-                      <NumberAxis fx:id="chastotaNumberAxis" label="Высота" side="LEFT" />
+                      <NumberAxis label="Высота" side="LEFT" />
                     </yAxis>
                   </StackedBarChart>
                </children>
@@ -180,14 +182,18 @@
          <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <StackedBarChart fx:id="diagramBBarChart" categoryGap="5.0" layoutY="89.0" prefHeight="416.0" prefWidth="790.0" title="Гистограмма распределения элементов последовательности">
-                     <xAxis>
-                        <CategoryAxis fx:id="intervalCategoryAxis11" label="Значения" />
-                     </xAxis>
-                     <yAxis>
-                        <NumberAxis fx:id="chastotaNumberAxis11" label="Количество" side="LEFT" />
-                     </yAxis>
-                  </StackedBarChart>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="5.0" layoutY="77.0" prefHeight="446.0" prefWidth="780.0">
+                     <content>
+                        <StackedBarChart fx:id="diagramBBarChart" categoryGap="5.0" prefHeight="421.0" prefWidth="756.0" title="Гистограмма распределения элементов последовательности">
+                           <xAxis>
+                              <CategoryAxis label="Значения" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis label="Количество" side="LEFT" />
+                           </yAxis>
+                        </StackedBarChart>
+                     </content>
+                  </ScrollPane>
                </children>
             </AnchorPane>
          </content>
@@ -198,26 +204,26 @@
                <children>
                   <StackedBarChart fx:id="series01BarChart" layoutY="4.0" legendVisible="false" prefHeight="171.0" prefWidth="790.0" title="Проверка 0 и 1">
                      <xAxis>
-                        <CategoryAxis fx:id="intervalCategoryAxis1" label="Значения" prefHeight="25.0" prefWidth="698.0" />
+                        <CategoryAxis label="Значения" prefHeight="25.0" prefWidth="698.0" />
                      </xAxis>
                      <yAxis>
-                        <NumberAxis fx:id="chastotaNumberAxis1" label="Количество" side="LEFT" />
+                        <NumberAxis label="Количество" side="LEFT" />
                      </yAxis>
                   </StackedBarChart>
                   <StackedBarChart fx:id="series01BarChart1" layoutY="172.0" legendVisible="false" prefHeight="217.0" prefWidth="790.0" title="Проверка серий двоек">
                      <xAxis>
-                        <CategoryAxis fx:id="intervalCategoryAxis12" label="Значения" />
+                        <CategoryAxis label="Значения" />
                      </xAxis>
                      <yAxis>
-                        <NumberAxis fx:id="chastotaNumberAxis12" label="Количество" side="LEFT" />
+                        <NumberAxis label="Количество" side="LEFT" />
                      </yAxis>
                   </StackedBarChart>
                   <StackedBarChart fx:id="series01BarChart2" categoryGap="5.0" layoutX="-1.0" layoutY="387.0" legendVisible="false" prefHeight="205.0" prefWidth="790.0" title="Проверка серий троек">
                      <xAxis>
-                        <CategoryAxis fx:id="intervalCategoryAxis121" label="Значения" />
+                        <CategoryAxis label="Значения" />
                      </xAxis>
                      <yAxis>
-                        <NumberAxis fx:id="chastotaNumberAxis121" label="Количество" side="LEFT" />
+                        <NumberAxis label="Количество" side="LEFT" />
                      </yAxis>
                   </StackedBarChart>
                </children>
@@ -228,30 +234,64 @@
          <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <StackedBarChart fx:id="diagramMonotonyBarChart" categoryGap="5.0" layoutY="122.0" legendVisible="false" prefHeight="350.0" prefWidth="790.0" title="Проверка на монотонность">
-                     <xAxis>
-                        <CategoryAxis fx:id="intervalCategoryAxis2" label="Номер участка в последовательности" />
-                     </xAxis>
-                     <yAxis>
-                        <NumberAxis fx:id="chastotaNumberAxis2" label="Количество" side="LEFT" />
-                     </yAxis>
-                  </StackedBarChart>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="5.0" layoutY="109.0" prefHeight="376.0" prefWidth="781.0">
+                     <content>
+                        <StackedBarChart fx:id="diagramMonotonyBarChart" categoryGap="5.0" legendVisible="false" title="Проверка на монотонность">
+                           <xAxis>
+                              <CategoryAxis label="Номер участка в последовательности" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis label="Количество" side="LEFT" />
+                           </yAxis>
+                        </StackedBarChart>
+                     </content>
+                  </ScrollPane>
                </children>
             </AnchorPane>
          </content>
       </Tab>
       <Tab fx:id="diagramAutocorrelationTab" disable="true" text="Тест на автокорреляцию">
          <content>
-            <AnchorPane fx:id="diagramAutocorrelationAnchor" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <AnchorPane fx:id="diagramAutocorrelationAnchor1" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <StackedBarChart fx:id="diagramAutocorrelationBarChart" categoryGap="0.5" layoutY="122.0" legendVisible="false" prefHeight="350.0" prefWidth="790.0" title="Битовая автокорреляция">
-                     <xAxis>
-                        <CategoryAxis fx:id="autocorrelationXAxis" label="Номер бита" />
-                     </xAxis>
-                     <yAxis>
-                        <NumberAxis fx:id="autocorrelationYAxis" label="Корреляция" side="LEFT" />
-                     </yAxis>
-                  </StackedBarChart>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="8.0" layoutY="122.0" prefHeight="350.0" prefWidth="775.0" AnchorPane.bottomAnchor="122.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="122.0">
+                     <content>
+                        <StackedBarChart fx:id="diagramAutocorrelationBarChart" categoryGap="1.0" legendVisible="false" prefHeight="399.0" prefWidth="788.0" title="Битовая автокорреляция">
+                           <xAxis>
+                              <CategoryAxis label="Номер бита" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis fx:id="autocorrelationYAxis" label="Корреляция" side="LEFT" />
+                           </yAxis>
+                           <padding>
+                              <Insets bottom="5.0" top="5.0" />
+                           </padding>
+                        </StackedBarChart>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </AnchorPane>
+         </content>
+      </Tab>
+      <Tab fx:id="diagramSpectralTab" disable="true" text="Спектральный тест">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <ScrollPane fitToHeight="true" fitToWidth="true" layoutX="8.0" layoutY="122.0" prefHeight="350.0" prefWidth="775.0" AnchorPane.bottomAnchor="122.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="7.0" AnchorPane.topAnchor="122.0">
+                     <content>
+                        <StackedBarChart fx:id="diagramSpectralBarChart" categoryGap="1.0" legendVisible="false" prefHeight="399.0" prefWidth="788.0" title="Спектральный тест">
+                           <xAxis>
+                              <CategoryAxis label="Номер гармоники" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis label="Выстота выброса" side="LEFT" />
+                           </yAxis>
+                           <padding>
+                              <Insets bottom="5.0" top="5.0" />
+                           </padding>
+                        </StackedBarChart>
+                     </content>
+                  </ScrollPane>
                </children>
             </AnchorPane>
          </content>
