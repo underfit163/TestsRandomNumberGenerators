@@ -17,6 +17,7 @@ public class RankTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
     private final int r;
+    private double[] pValue;
 
     public RankTest(NumberSample numberSample, ParamsTest paramsTest, int r) {
         this.numberSample = numberSample;
@@ -24,11 +25,10 @@ public class RankTest implements Test {
         this.r = r;
     }
 
-
     @Override
     public void runTest() {
         double[] chiSquared = new double[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
+        pValue = new double[numberSample.getCountSample()];
         double p_r2;
         double p_r1;
         double p_r0;
@@ -124,10 +124,24 @@ public class RankTest implements Test {
         } else paramsTest.getTests().put(getClass().getSimpleName(), false);
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ")
+                .append(numberSample.getBitSetList().get(0).length()).append("\n")
+                .append("   Размер матрицы: ").append(r).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
+
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Тест рангов матриц:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

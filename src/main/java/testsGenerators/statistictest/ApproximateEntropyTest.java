@@ -18,7 +18,6 @@ public class ApproximateEntropyTest implements Test {
     private final int m;
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
-
     private double[] pValue;
 
     /**
@@ -120,11 +119,23 @@ public class ApproximateEntropyTest implements Test {
         } else paramsTest.getTests().put(getClass().getSimpleName(), false);
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ").append(numberSample.getBitSetList().get(0).length()).append("\n")
+                .append("   Длина блока: ").append(m).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
+
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Проверка аппроксимированной энтропии:\n");
-        //stringBuilder.append("Значения p-value последовательностей: ").append(Arrays.toString(pValue)).append(" должны быть больше ").append(paramsTest.getA()).append("\n");;
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

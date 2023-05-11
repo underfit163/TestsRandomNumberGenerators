@@ -15,19 +15,23 @@ import java.util.stream.IntStream;
 public class CumulativeSumsTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
-    private final NormalDistribution nd = new NormalDistribution();
+    private final NormalDistribution nd;
+    private int[] z;
+    private int[] zrev;
+    private double[] pValue;
 
     public CumulativeSumsTest(NumberSample numberSample, ParamsTest paramsTest) {
         this.numberSample = numberSample;
         this.paramsTest = paramsTest;
+        this.nd = new NormalDistribution();
     }
 
     @Override
     public void runTest() {
         long n = numberSample.getBitSetList().get(0).length();
         //if (n > 1_000_000) n = 1_000_000;
-        int[] z = new int[numberSample.getCountSample()];
-        int[] zrev = new int[numberSample.getCountSample()];
+        z = new int[numberSample.getCountSample()];
+        zrev = new int[numberSample.getCountSample()];
         double sqrtN = Math.sqrt(n);
 
         int[] S = new int[numberSample.getCountSample()];
@@ -36,7 +40,7 @@ public class CumulativeSumsTest implements Test {
         int[] k = new int[numberSample.getCountSample()];
         double[] sum1 = new double[numberSample.getCountSample()];
         double[] sum2 = new double[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
+        pValue = new double[numberSample.getCountSample()];
         IntStream.range(0, numberSample.getCountSample()).parallel().forEach(i -> {
             for (int j = 0; j < n; j++) {
                 if (numberSample.getBitSetList().get(i).get(j)) S[i]++;
@@ -101,10 +105,27 @@ public class CumulativeSumsTest implements Test {
         } else paramsTest.getTests().put(getClass().getSimpleName(), false);
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ")
+                .append(numberSample.getBitSetList().get(0).length()).append("\n");
+        stringBuilder
+                .append("Максимальные значения суммы при движении в прямом направлении: ")
+                .append(Arrays.toString(Arrays.stream(z).toArray())).append("\n")
+                .append("Максимальные значения суммы при движении в обратном направлении: ")
+                .append(Arrays.toString(Arrays.stream(zrev).toArray())).append("\n")
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
+
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Проверка кумулятивных сумм:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

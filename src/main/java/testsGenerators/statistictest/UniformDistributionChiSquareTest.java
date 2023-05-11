@@ -14,6 +14,9 @@ import java.util.Arrays;
 public class UniformDistributionChiSquareTest extends UniformDistributionTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
+    private int n;
+    private double len;
+    private double[] pValue;
 
     public UniformDistributionChiSquareTest(NumberSample numberSample, ParamsTest paramsTest) {
         super(numberSample);
@@ -24,12 +27,12 @@ public class UniformDistributionChiSquareTest extends UniformDistributionTest im
     @Override
     public void runTest() {
         //число интервалов
-        int n = 10;
+        n = 10;
         double[] xi2 = new double[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
+        pValue = new double[numberSample.getCountSample()];
         int count = 0;
         //длина интервала
-        double len = (double) 1 / n;
+        len = (double) 1 / n;
         initFrequency(n, len);
 
         for (int i = 0; i < numberSample.getCountSample(); i++) {
@@ -80,10 +83,24 @@ public class UniformDistributionChiSquareTest extends UniformDistributionTest im
         } else paramsTest.getTests().put(getClass().getSimpleName(), false);
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности чисел: ").append(numberSample.getCountSample()).append("\n")
+                .append("   Длина интервала: ").append(len).append("\n")
+                .append("   Количество интервалов: ").append(n).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
+
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Проверка гипотезы равномерного распределения случайной величины с помощью критерия хи-квадрат:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

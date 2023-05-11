@@ -20,7 +20,10 @@ public class NonOverlappingTemplateMatchingTest implements Test {
     private final ParamsTest paramsTest;
     private int N;
     private final int m;
-    static final int MAXNUMOFTEMPLATES = 148;
+    private int M;
+    double[] arrPVal;
+    private static final int MAXNUMOFTEMPLATES = 148;
+
 
     /**
      * @param templateLength размер шаблона в битах
@@ -36,9 +39,7 @@ public class NonOverlappingTemplateMatchingTest implements Test {
     @Override
     public void runTest() {
         int length = numberSample.getBitSetList().get(0).length();
-
-
-        int M = length / N;//количество бит в одной последовательности
+        M = length / N;//количество бит в одной последовательности
 
         double lambda = (M - m + 1) / Math.pow(2, m);//мат. ожидание
         double varWj = M * (1.0 / Math.pow(2.0, m) - (2.0 * m - 1.0) / Math.pow(2.0, 2.0 * m));//gamma
@@ -107,7 +108,7 @@ public class NonOverlappingTemplateMatchingTest implements Test {
         }
         KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
         double xi2Pvalue;
-        double[] arrPVal = new double[numberSample.getCountSample() * pValue[0].length];
+        arrPVal = new double[numberSample.getCountSample() * pValue[0].length];
         for (int i = 0; i < numberSample.getCountSample(); i++) {
             for (int j = 0; j < pValue[i].length; j++) {
                 arrPVal[i * pValue[i].length + j] = pValue[i][j];
@@ -151,10 +152,26 @@ public class NonOverlappingTemplateMatchingTest implements Test {
         } else paramsTest.getTests().put(getClass().getSimpleName(), false);
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ")
+                .append(numberSample.getBitSetList().get(0).length()).append("\n")
+                .append("   Длина блока: ").append(M).append("\n")
+                .append("   Количество блоков: ").append(N).append("\n")
+                .append("   Длина шаблонов в битах: ").append(m).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(arrPVal).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
+
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Проверка непересекающихся шаблонов:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

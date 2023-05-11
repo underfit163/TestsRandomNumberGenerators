@@ -16,6 +16,7 @@ public class RandomExcursionsTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
     private static final int[] stateX = {-9, -8, -7, -6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    private double[] arrPVal;
 
     public RandomExcursionsTest(NumberSample numberSample, ParamsTest paramsTest) {
         this.numberSample = numberSample;
@@ -65,7 +66,7 @@ public class RandomExcursionsTest implements Test {
         }
         KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
         double xi2Pvalue;
-        double[] arrPVal = new double[numberSample.getCountSample() * pValue[0].length];
+        arrPVal = new double[numberSample.getCountSample() * pValue[0].length];
         for (int i = 0; i < numberSample.getCountSample(); i++) {
             for (int j = 0; j < pValue[i].length; j++) {
                 arrPVal[i * pValue[i].length + j] = pValue[i][j];
@@ -111,10 +112,23 @@ public class RandomExcursionsTest implements Test {
         } else paramsTest.getTests().put(getClass().getSimpleName(), false);
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ")
+                .append(numberSample.getBitSetList().get(0).length()).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(arrPVal).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
+
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Проверка случайных отклонений:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

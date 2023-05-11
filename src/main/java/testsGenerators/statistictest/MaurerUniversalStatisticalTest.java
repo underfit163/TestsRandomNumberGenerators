@@ -14,6 +14,10 @@ import java.util.stream.IntStream;
 public class MaurerUniversalStatisticalTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
+    private int Q;
+    private int L;
+    private int K;
+    private double[] pValue;
 
     public MaurerUniversalStatisticalTest(NumberSample numberSample, ParamsTest paramsTest) {
         this.numberSample = numberSample;
@@ -29,8 +33,6 @@ public class MaurerUniversalStatisticalTest implements Test {
     public void runTest() {
         long n = (long) numberSample.getNSample() * numberSample.getCapacity();
         //Инициализирующий сегмент
-        int Q;
-        int L;
         double expectedValue;
         double variance;
         if (n < 8080) {
@@ -115,7 +117,7 @@ public class MaurerUniversalStatisticalTest implements Test {
             variance = 3.421;
         }
         //Тестовый сегмент
-        int K = (int) (n / L) - Q;
+        K = (int) (n / L) - Q;
         long newNBit = Q * L + (long) K * L;
         int newNSample = (int) (newNBit / numberSample.getCapacity());
         int difBit = (int) (newNBit % numberSample.getCapacity());
@@ -165,7 +167,7 @@ public class MaurerUniversalStatisticalTest implements Test {
             }
         });
         double[] fn = new double[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
+        pValue = new double[numberSample.getCountSample()];
         double z;
         double sigm = (0.7 - 0.8 / L + (4 + (double) 32 / L) * ((Math.pow(K, (double) -3 / L)) / 15)) * Math.sqrt(variance / K);
         int count = 0;
@@ -215,10 +217,27 @@ public class MaurerUniversalStatisticalTest implements Test {
         }else paramsTest.getTests().put(getClass().getSimpleName(), false);
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ").append(numberSample.getBitSetList().get(0).length()).append("\n")
+                .append("   Длина инициализирующего блока: ").append(L).append("\n")
+                .append("   Количество инициализирующих блоков: ").append(Q).append("\n")
+                .append("   Длина тестового блока: ").append(L).append("\n")
+                .append("   Количество тестовых блоков: ").append(K).append("\n");
+
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
+
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Универсальный статистический тест Маурера:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

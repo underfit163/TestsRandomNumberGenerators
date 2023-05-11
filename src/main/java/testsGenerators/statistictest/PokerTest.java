@@ -11,6 +11,9 @@ import java.util.stream.IntStream;
 public class PokerTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
+    private int t;
+    private int nGroup;
+    double[] pValue;
 
     public PokerTest(NumberSample numberSample, ParamsTest paramsTest) {
         this.numberSample = numberSample;
@@ -24,8 +27,8 @@ public class PokerTest implements Test {
 
     @Override
     public void runTest() {
-        int t = 5;
-        int nGroup = numberSample.getNSample() / t;
+        t = 5;
+        nGroup = numberSample.getNSample() / t;
         int newNSample = t * nGroup;
         int d = (int) (Math.pow(2, numberSample.getCapacity()) - 1);
         double[] p = new double[t];
@@ -78,7 +81,7 @@ public class PokerTest implements Test {
         }
 
         double[] xi2 = new double[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
+        pValue = new double[numberSample.getCountSample()];
         int count = 0;
         double x1 = 0;
         for (int i = 0; i < numberSample.getCountSample(); i++) {
@@ -98,10 +101,25 @@ public class PokerTest implements Test {
                 paramsTest.getDols().get(getClass().getSimpleName()) <= (1 - paramsTest.getA()) + 3 * Math.sqrt(paramsTest.getA() * (1 - paramsTest.getA()) / numberSample.getCountSample()));
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности чисел: ")
+                .append(numberSample.getCountSample()).append("\n")
+                .append("   Количество чисел в группе: ").append(t).append("\n")
+                .append("   Количество групп: ").append(nGroup).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
+
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Покер-тест:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

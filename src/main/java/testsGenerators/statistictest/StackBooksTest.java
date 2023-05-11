@@ -17,6 +17,8 @@ public class StackBooksTest implements Test {
     private final ParamsTest paramsTest;
     private int k;
     private final int N;
+    private int[] input;
+    private double[] pValue;
 
     public StackBooksTest(NumberSample numberSample, ParamsTest paramsTest, int N) {
         this.numberSample = numberSample;
@@ -28,14 +30,14 @@ public class StackBooksTest implements Test {
     public void runTest() {
         k = (int) (Math.pow(2, 8) / N);
         double[] chiSquared = new double[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
+        pValue = new double[numberSample.getCountSample()];
         for (int i = 0; i < numberSample.getCountSample(); i++) {
             int[] A = new int[N];
             int[] list = new int[(int) Math.pow(2, 8)];
             for (int j = 0; j < list.length; j++) {
                 list[j] = j;
             }
-            int[] input = toPositiveBytes(numberSample.getBitSetList().get(i).toByteArray());
+            input = toPositiveBytes(numberSample.getBitSetList().get(i).toByteArray());
             mtfEncode(input, A, list);
 
             for (int j = 0; j < N; j++) {
@@ -131,10 +133,24 @@ public class StackBooksTest implements Test {
         }
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности чисел: ").append(input.length).append("\n")
+                .append("   Длина множества: ").append(k).append("\n")
+                .append("   Количество множеств: ").append(N).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
+
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Стопка книг:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

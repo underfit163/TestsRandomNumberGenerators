@@ -3,7 +3,6 @@ package testsGenerators.statistictest;
 import fr.devnied.bitlib.BytesUtils;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.special.Erf;
-import org.apache.commons.math3.special.Gamma;
 import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import sample.NumberSample;
 import testsGenerators.ParamsTest;
@@ -16,6 +15,7 @@ import java.util.Arrays;
 public class RunTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
+    double[] pValue;
 
     public RunTest(NumberSample numberSample, ParamsTest paramsTest) {
         this.numberSample = numberSample;
@@ -34,7 +34,7 @@ public class RunTest implements Test {
         double t = 2 / (Math.sqrt(numberSample.getNSample() * numberSample.getCapacity()));
         long[] series = new long[numberSample.getCountSample()];
         Arrays.parallelSetAll(series, this::getCountSeries);
-        double[] pValue = new double[numberSample.getCountSample()];
+        pValue = new double[numberSample.getCountSample()];
         int count = 0;
         long n = (long) numberSample.getNSample() * numberSample.getCapacity();
         for (int i = 0; i < numberSample.getCountSample(); i++) {
@@ -112,11 +112,23 @@ public class RunTest implements Test {
         }
         return sumCount;
     }
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ")
+                .append(numberSample.getBitSetList().get(0).length()).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
 
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Проверка на равномерность битов:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

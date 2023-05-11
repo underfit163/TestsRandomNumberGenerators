@@ -18,7 +18,7 @@ public class SpectralTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
     private double[][] m;
-
+    double[] pValue;
     private double upperBound;
 
     public SpectralTest(NumberSample numberSample, ParamsTest paramsTest) {
@@ -47,7 +47,7 @@ public class SpectralTest implements Test {
         double[][] X = new double[numberSample.getCountSample()][n];
         m = new double[numberSample.getCountSample()][n / 2 + 1];
         int[] counts = new int[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
+        pValue = new double[numberSample.getCountSample()];
 
         int finalN = n;
         IntStream.range(0, numberSample.getCountSample()).parallel().forEach(i -> {
@@ -119,11 +119,24 @@ public class SpectralTest implements Test {
                     paramsTest.getDols().get(getClass().getSimpleName()) <= (1 - paramsTest.getA()) + 3 * Math.sqrt(paramsTest.getA() * (1 - paramsTest.getA()) / numberSample.getCountSample()));
         } else paramsTest.getTests().put(getClass().getSimpleName(), false);
     }
-
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ")
+                .append(numberSample.getBitSetList().get(0).length()).append("\n")
+                .append("   Предельное значение для гармоники: ")
+                .append(upperBound).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Спектральный тест:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

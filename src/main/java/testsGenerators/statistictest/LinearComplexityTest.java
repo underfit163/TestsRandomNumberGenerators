@@ -16,6 +16,10 @@ import java.util.stream.IntStream;
  */
 public class LinearComplexityTest implements Test {
     private final int M;
+    private int N;
+    private int K;
+
+    private double[] pValue;
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
 
@@ -26,18 +30,18 @@ public class LinearComplexityTest implements Test {
         this.numberSample = numberSample;
         this.paramsTest = paramsTest;
         if (M < 500 || M > 5000) {
-            this.M = 500;
+            this.M = 800;
         } else this.M = M;
     }
 
     @Override
     public void runTest() {
         double[] chi2 = new double[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
-        int K = 6;
+        pValue = new double[numberSample.getCountSample()];
+        K = 6;
         double[] pi = new double[]{0.01047, 0.03125, 0.12500, 0.50000, 0.25000, 0.06250, 0.020833};
         int length = numberSample.getBitSetList().get(0).length();
-        int N = length / M;
+        N = length / M;
 
         IntStream.range(0, numberSample.getCountSample()).parallel().forEach(t -> {
             int d, L, m, N_, sign;
@@ -66,7 +70,7 @@ public class LinearComplexityTest implements Test {
                     d = d % 2;
                     if (d == 1) {//Шаг 2.2
                         P.clear();
-                        T.or(C);
+                        T = (BitSet) C.clone();
                         for (int j = 0; j < M; j++) {//Шаг 2.2.1.
                             if (B_.get(j)) {
                                 P.set(j + N_ - m);
@@ -78,8 +82,7 @@ public class LinearComplexityTest implements Test {
                         if (L <= N_ / 2) {//Шаг 2.2.2
                             L = N_ + 1 - L;
                             m = N_;
-                            B_.clear();
-                            B_.or(T);
+                            B_ = (BitSet) T.clone();
                         }
                     }
                     N_++;//Шаг 2.3
@@ -161,10 +164,25 @@ public class LinearComplexityTest implements Test {
         } else paramsTest.getTests().put(getClass().getSimpleName(), false);
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ")
+                .append(numberSample.getBitSetList().get(0).length()).append("\n")
+                .append("   Длина блока: ").append(M).append("\n")
+                .append("   Количество блоков: ").append(N).append("\n")
+                .append("   Количество категорий: ").append(K).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Проверка линейной сложности:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

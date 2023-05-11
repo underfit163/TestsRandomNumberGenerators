@@ -49,7 +49,10 @@ public class MeanTest implements Test {
         stringBuilder.append("Тест ").append(count).append(". Оценка математического ожидания каждой выборки случайных чисел:\n");
         stringBuilder.append("Экспериментально измеренное математическое ожидание каждой выборки: ").append((double) Math.round(expMean * 100000.0) / 100000.0).append("\n");
         stringBuilder.append("Теоретическое математическое ожидание: " + 0.5 + "\n");
-        stringBuilder.append("Процент отклонения рассчитанного математического ожидания от теоретического: ").append((double) Math.round(paramsTest.getDols().get(getClass().getSimpleName()) * 100000.0) / 100000.0).append("%").append("\n");
+        stringBuilder
+                .append("Процент отклонения рассчитанного математического ожидания от теоретического: ")
+                .append((double) Math.round(paramsTest.getDols().get(getClass().getSimpleName()) * 100000.0) / 100000.0)
+                .append("%").append("\n").append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");
         } else {

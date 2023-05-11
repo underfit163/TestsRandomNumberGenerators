@@ -12,8 +12,7 @@ public class NumberSample {
     private int capacity;
     private double maxNumber;
     private final int[][] sample;
-
-    List<BitSet> bitSetList;
+    private List<BitSet> bitSetList;
 
     public NumberSample(int count, int n) {
         countSample = count;

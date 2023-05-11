@@ -17,6 +17,8 @@ public class FrequencyBlockTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
     private final int blockLen;
+    private double[] pValue;
+    private int blockCount;
 
     public FrequencyBlockTest(NumberSample numberSample, ParamsTest paramsTest, int blockLen) {
         this.numberSample = numberSample;
@@ -33,8 +35,8 @@ public class FrequencyBlockTest implements Test {
     public void runTest() {
         long n = numberSample.getBitSetList().get(0).length();
         double[] xi2 = new double[numberSample.getCountSample()];
-        double[] pValue = new double[numberSample.getCountSample()];
-        int blockCount = (int) (n / blockLen);
+        pValue = new double[numberSample.getCountSample()];
+        blockCount = (int) (n / blockLen);
         double[][] sum = new double[numberSample.getCountSample()][blockCount];
 
         IntStream.range(0, numberSample.getCountSample()).parallel().forEach(i -> Arrays.parallelSetAll(sum[i], t -> getCountBit(t, numberSample.getBitSetList().get(i))));
@@ -101,10 +103,25 @@ public class FrequencyBlockTest implements Test {
         return (double) blockSum / (double) blockLen;
     }
 
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ")
+                .append(numberSample.getBitSetList().get(0).length()).append("\n")
+                .append("   Длина блока: ").append(blockLen).append("\n")
+                .append("   Количество блоков: ").append(blockCount).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
+
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Частотный тест в подпоследовательностях:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");

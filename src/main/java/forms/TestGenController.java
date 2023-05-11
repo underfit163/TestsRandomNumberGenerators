@@ -1184,7 +1184,7 @@ public class TestGenController {
         SpectralTest spectralTest = new SpectralTest(numberSample, paramsTest);
         statisticTests.add(spectralTest);
         statisticTests.add(new ApproximateEntropyTest(numberSample, paramsTest, 3));
-        statisticTests.add(new LinearComplexityTest(numberSample, paramsTest, 500));
+        statisticTests.add(new LinearComplexityTest(numberSample, paramsTest, 800));
         statisticTests.add(new RankTest(numberSample, paramsTest, 32));
         statisticTests.add(new FrequencyBlockTest(numberSample, paramsTest, 20));
         statisticTests.add(new RandomExcursionsTest(numberSample, paramsTest));

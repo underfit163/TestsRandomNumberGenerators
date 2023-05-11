@@ -1,15 +1,20 @@
 package testsGenerators.statistictest;
 
 import fr.devnied.bitlib.BytesUtils;
+import org.apache.commons.math3.distribution.UniformRealDistribution;
 import org.apache.commons.math3.special.Gamma;
+import org.apache.commons.math3.stat.inference.KolmogorovSmirnovTest;
 import sample.NumberSample;
 import testsGenerators.ParamsTest;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class SerialTest implements Test {
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
+    private byte m = 5;
+    private double[][] pValue;
 
     public SerialTest(NumberSample numberSample, ParamsTest paramsTest) {
         this.numberSample = numberSample;
@@ -23,7 +28,7 @@ public class SerialTest implements Test {
 
     @Override
     public void runTest() {
-        byte m = 5;
+        m = 5;
         long n = (long) numberSample.getNSample() * numberSample.getCapacity();
         long[][] v3 = new long[numberSample.getCountSample()][(int) Math.pow(2, m)];
         long[][] v2 = new long[numberSample.getCountSample()][(int) Math.pow(2, m - 1)];
@@ -38,7 +43,7 @@ public class SerialTest implements Test {
         double fi23;
         double fi22;
         double fi21;
-        double[][] pValue = new double[numberSample.getCountSample()][2];
+        pValue = new double[numberSample.getCountSample()][2];
         double[] deltFi21 = new double[numberSample.getCountSample()];
         double[] deltFi22 = new double[numberSample.getCountSample()];
         int count = 0;
@@ -62,47 +67,51 @@ public class SerialTest implements Test {
             pValue[i][0] = Gamma.regularizedGammaQ(Math.pow(2, m - 2), deltFi21[i] / 2);
             pValue[i][1] = Gamma.regularizedGammaQ(Math.pow(2, m - 3), deltFi22[i] / 2);
 
-            if (paramsTest.getA() <= pValue[i][0] && pValue[i][0] <= 1 - paramsTest.getA()
-                    && paramsTest.getA() <= pValue[i][1]) {
+            if (paramsTest.getA() <= pValue[i][0] && paramsTest.getA() <= pValue[i][1]) {
                 count++;
             }
             sum32 = 0;
             sum22 = 0;
             sum12 = 0;
         }
-        int[][] vPvalue = new int[2][10];
-        double left;
-        double right;
-        for (int j = 0; j < numberSample.getCountSample(); j++) {
-            for (int i = 1; i <= 10; i++) {
-                left = (double) (i - 1) / 10;
-                right = (double) i / 10;
-                if (i == 10 && pValue[j][0] == right) {
-                    vPvalue[0][i - 1]++;
-                }
-                if (i == 10 && pValue[j][1] == right) {
-                    vPvalue[1][i - 1]++;
-                }
-                if (left <= pValue[j][0] && pValue[j][0] < right) {
-                    vPvalue[0][i - 1]++;
-                }
-                if (left <= pValue[j][1] && pValue[j][1] < right) {
-                    vPvalue[1][i - 1]++;
-                }
-            }
-        }
-        double xi2Pvalue1 = 0;
-        for (int j : vPvalue[0]) {
-            xi2Pvalue1 += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
-        }
-        xi2Pvalue1 = xi2Pvalue1 / ((double) numberSample.getCountSample() / 10);
-        xi2Pvalue1 = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue1 / 2);
-        double xi2Pvalue2 = 0;
-        for (int j : vPvalue[1]) {
-            xi2Pvalue2 += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
-        }
-        xi2Pvalue2 = xi2Pvalue2 / ((double) numberSample.getCountSample() / 10);
-        xi2Pvalue2 = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue2 / 2);
+        KolmogorovSmirnovTest ksTest = new KolmogorovSmirnovTest();
+        Arrays.sort(pValue[0]);
+        Arrays.sort(pValue[1]);
+        double xi2Pvalue1 = ksTest.kolmogorovSmirnovTest(new UniformRealDistribution(0, 1), pValue[0]);
+        double xi2Pvalue2 = ksTest.kolmogorovSmirnovTest(new UniformRealDistribution(0, 1), pValue[1]);
+//        int[][] vPvalue = new int[2][10];
+//        double left;
+//        double right;
+//        for (int j = 0; j < numberSample.getCountSample(); j++) {
+//            for (int i = 1; i <= 10; i++) {
+//                left = (double) (i - 1) / 10;
+//                right = (double) i / 10;
+//                if (i == 10 && pValue[j][0] == right) {
+//                    vPvalue[0][i - 1]++;
+//                }
+//                if (i == 10 && pValue[j][1] == right) {
+//                    vPvalue[1][i - 1]++;
+//                }
+//                if (left <= pValue[j][0] && pValue[j][0] < right) {
+//                    vPvalue[0][i - 1]++;
+//                }
+//                if (left <= pValue[j][1] && pValue[j][1] < right) {
+//                    vPvalue[1][i - 1]++;
+//                }
+//            }
+//        }
+//        double xi2Pvalue1 = 0;
+//        for (int j : vPvalue[0]) {
+//            xi2Pvalue1 += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
+//        }
+//        xi2Pvalue1 = xi2Pvalue1 / ((double) numberSample.getCountSample() / 10);
+//        xi2Pvalue1 = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue1 / 2);
+//        double xi2Pvalue2 = 0;
+//        for (int j : vPvalue[1]) {
+//            xi2Pvalue2 += Math.pow(j - (double) numberSample.getCountSample() / 10, 2);
+//        }
+//        xi2Pvalue2 = xi2Pvalue2 / ((double) numberSample.getCountSample() / 10);
+//        xi2Pvalue2 = Gamma.regularizedGammaQ((double) (10 - 1) / 2, xi2Pvalue2 / 2);
         paramsTest.getTestPval().put(getClass().getSimpleName(), false);
         if (xi2Pvalue1 >= paramsTest.getA() && xi2Pvalue2 >= paramsTest.getA()) {
             paramsTest.getTestPval().put(getClass().getSimpleName(), true);
@@ -175,11 +184,23 @@ public class SerialTest implements Test {
             }
         });
     }
-
+    public StringBuilder resultTest() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Параметры теста: ").append("\n")
+                .append("   Длина последовательности бит: ")
+                .append(numberSample.getBitSetList().get(0).length()).append("\n");
+        stringBuilder
+                .append("Значения p-value последовательностей: ").append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue[0]).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append(Arrays.toString(Arrays.stream(pValue[1]).sorted().mapToObj(x -> String.format("%.3f", x)).toArray())).append("\n")
+                .append("должны быть больше ").append(paramsTest.getA()).append("\n");
+        return stringBuilder;
+    }
     @Override
     public StringBuilder result(int count) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Тест ").append(count).append(". Тест серий битов:\n");
+        stringBuilder.append(resultTest()).append("\n");
         stringBuilder.append("Доля последовательностей прошедших тест: ").append(paramsTest.getDols().get(getClass().getSimpleName())).append("\n");
         if (paramsTest.getTests().get(getClass().getSimpleName())) {
             stringBuilder.append("Тест пройден\n");
