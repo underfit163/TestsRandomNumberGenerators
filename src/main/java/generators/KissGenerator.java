@@ -16,6 +16,6 @@ public class KissGenerator {
     }
 
     public int kiss9231(int s) {
-        return (int) (kiss92Rand() >> (32-s));
+        return (int) ((kiss92Rand()& 0xFFFFFFFFL) >> (32-s));
     }
 }

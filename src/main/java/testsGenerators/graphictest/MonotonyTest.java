@@ -43,6 +43,7 @@ public class MonotonyTest implements GraphicTest {
             } else {
                 monotonySeries.put(t, monotonySeries.get(t) + 1);
             }
+            if(i> 1000) break;
         }
     }
 

@@ -63,7 +63,7 @@ public class TestsSample {
         }
     }
     public void runGraphicTest(List<GraphicTest> testsList) {
-        ExecutorService executorService = Executors.newFixedThreadPool(3);
+        ExecutorService executorService = Executors.newFixedThreadPool(4);
         List<Future<?>> futures = testsList.stream().map(executorService::submit).collect(Collectors.toList());
         executorService.shutdown();
         for (var future : futures) {

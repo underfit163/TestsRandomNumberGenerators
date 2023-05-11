@@ -370,6 +370,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "GFSR_генератор_с_3_параметрами": {
                         GfsrGeneratorPar3 gfsrGeneratorPar3 = new GfsrGeneratorPar3();
@@ -417,6 +418,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "GFSR_генератор_с_5_параметрами": {
                         GfsrGeneratorPar5 gfsrGeneratorPar5 = new GfsrGeneratorPar5();
@@ -464,6 +466,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "Генератор_Таусворта": {
                         TausworthGenerator tausworthGenerator = new TausworthGenerator();
@@ -511,6 +514,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "Генератор_Твистера": {
                         TwisterGenerator twisterGenerator = new TwisterGenerator();
@@ -559,6 +563,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "LCG_генератор_V1": {
                         LCGeneratorV1 lcGeneratorV1 = new LCGeneratorV1();
@@ -606,6 +611,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "LCG_генератор_V2": {
                         LCGeneratorV2 lcGeneratorV2 = new LCGeneratorV2();
@@ -653,6 +659,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "Мультипликативный_генератор_V1": {
                         MultiplicativeGeneratorV1 multiplicativeGeneratorV1 = new MultiplicativeGeneratorV1();
@@ -700,6 +707,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "Мультипликативный_генератор_V2": {
                         MultiplicativeGeneratorV2 multiplicativeGeneratorV2 = new MultiplicativeGeneratorV2();
@@ -747,6 +755,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "Мультипликативный_генератор_V3": {
                         MultiplicativeGeneratorV3 multiplicativeGeneratorV3 = new MultiplicativeGeneratorV3();
@@ -794,6 +803,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "Мультипликативный_генератор_V4": {
                         MultiplicativeGeneratorV4 multiplicativeGeneratorV4 = new MultiplicativeGeneratorV4();
@@ -841,6 +851,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "Мультипликативный_генератор_V5": {
                         MultiplicativeGeneratorV5 multiplicativeGeneratorV5 = new MultiplicativeGeneratorV5();
@@ -888,6 +899,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "KISS_генератор": {
                         KissGenerator kissGenerator = new KissGenerator();
@@ -935,6 +947,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "Random_генератор": {
                         Random r = new Random();
@@ -982,6 +995,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "SecureRandom_генератор": {
                         SecureRandom sr = new SecureRandom();
@@ -1029,6 +1043,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                     case "SplittableRandom_генератор": {
                         SplittableRandom splittableRandom = null;
@@ -1076,6 +1091,7 @@ public class TestGenController {
                         } else {
                             infoLabel.setText("Выборка огромная, загружена только в массив");
                         }
+                        break;
                     }
                 }
                 if (loadCheckBox.isSelected()) {
@@ -1281,7 +1297,7 @@ public class TestGenController {
                     }
                     autocorrelationI.getAndIncrement();
                 });
-        double totalAutocorrelationWidth = 800 * diagramAutocorrelationBarChart.getData().size() * 10;
+        double totalAutocorrelationWidth = 800 * diagramAutocorrelationBarChart.getData().size() * 15;
         diagramAutocorrelationBarChart.setMinWidth(totalAutocorrelationWidth);
         diagramAutocorrelationBarChart.setPrefWidth(totalAutocorrelationWidth);
 
@@ -1290,7 +1306,7 @@ public class TestGenController {
         for (double v : spectralTest.getM()[0]) {
             dataSeries8.getData().add(new XYChart.Data<>(String.valueOf(l), v));
             l++;
-            if(l >= 1001) break;
+            if (l >= 1001) break;
         }
         diagramSpectralBarChart.getData().add(dataSeries8);
 
