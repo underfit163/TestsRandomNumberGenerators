@@ -24,12 +24,12 @@ public class AutocorrelationTest implements GraphicTest {
     public void runTest() {
         BitSet bitSet = numberSample.getBitSetList().get(0);
         int len = Math.min(bitSet.length(), 1000);
-        IntStream.range(0, len + 1).parallel().forEach(j -> {
+        IntStream.range(0, len + 1).forEach(j -> {
             int cj = 0;
-            for (int i = 0; i < bitSet.length(); i++) {
-                cj += (bitSet.get(i) ? 1 : -1) * (bitSet.get((i + j) % bitSet.length()) ? 1 : -1);
+            for (int i = 0; i < len + 1; i++) {
+                cj += (bitSet.get(i) ? 1 : -1) * (bitSet.get((i + j) % len) ? 1 : -1);
             }
-            autocorrelationSeries.put(j + 1, ((double) cj / bitSet.length()));
+            autocorrelationSeries.put(j + 1, ((double) cj / len));
         });
     }
 

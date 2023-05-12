@@ -45,7 +45,7 @@ public class TestsSample {
         }
     }
 
-    public void initParams(){
+    public void initParams() {
         numberSample.getBitSets();
         initSummaryStatistics();
     }
@@ -62,6 +62,7 @@ public class TestsSample {
             }
         }
     }
+
     public void runGraphicTest(List<GraphicTest> testsList) {
         ExecutorService executorService = Executors.newFixedThreadPool(4);
         List<Future<?>> futures = testsList.stream().map(executorService::submit).collect(Collectors.toList());
@@ -75,7 +76,6 @@ public class TestsSample {
         }
     }
 
-
     public double getResTests() {
         int count = 0;
         for (boolean b : paramsTest.getTests().values()) {
@@ -85,7 +85,4 @@ public class TestsSample {
         }
         return (Math.round(((double) count / paramsTest.getTests().size()) * 1000.0) / 1000.0) * 100;
     }
-
 }
-
-

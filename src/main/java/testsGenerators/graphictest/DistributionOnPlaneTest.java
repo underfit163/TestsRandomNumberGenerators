@@ -8,8 +8,8 @@ import sample.NumberSample;
 public class DistributionOnPlaneTest implements GraphicTest {
 
     private final NumberSample numberSample;
-    private Canvas graphTestCanvas;
-    private Canvas graphDopTestCanvas;
+    private final Canvas graphTestCanvas;
+    private final Canvas graphDopTestCanvas;
 
     public DistributionOnPlaneTest(NumberSample numberSample, Canvas graphTestCanvas, Canvas graphDopTestCanvas) {
         this.numberSample = numberSample;
@@ -28,7 +28,7 @@ public class DistributionOnPlaneTest implements GraphicTest {
         int max = (int) (Math.pow(2, numberSample.getCapacity()) - 1);
         //int[] pixelsMas = numberSample.matrToMas();
         for (int j = 0; j < numberSample.getCountSample(); j++) {
-            if(j * size > 9_000_000) break;
+            if(j * size > 2_000_000) break;
             int[] pixelsMas = numberSample.getSample()[j];
             for (int i = 0; i < size; i++) {
                 gc.getPixelWriter().setColor(

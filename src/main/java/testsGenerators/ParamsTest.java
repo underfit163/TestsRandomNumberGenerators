@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ParamsTest {
-    private final Map<String,Boolean> testPval;
-    private final Map<String,Double> dols;
-    private final Map<String,Boolean> tests;
+    private final Map<String, Boolean> testPval;
+    private final Map<String, Double> dols;
+    private final Map<String, Boolean> tests;
     private double a = 0.01;
 
     public ParamsTest() {

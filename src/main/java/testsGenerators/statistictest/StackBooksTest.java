@@ -12,7 +12,6 @@ import java.util.Arrays;
  * 19)	Тест «стопка книг».
  */
 public class StackBooksTest implements Test {
-
     private final NumberSample numberSample;
     private final ParamsTest paramsTest;
     private int k;

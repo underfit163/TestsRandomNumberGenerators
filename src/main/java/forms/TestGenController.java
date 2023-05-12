@@ -1283,8 +1283,8 @@ public class TestGenController {
         diagramMonotonyBarChart.setPrefWidth(totalMonotonyWidth);
 
         autocorrelationYAxis.setAutoRanging(false);
-        autocorrelationYAxis.setLowerBound(-0.5);
-        autocorrelationYAxis.setUpperBound(0.5);
+        autocorrelationYAxis.setLowerBound(-1.0);
+        autocorrelationYAxis.setUpperBound(1.0);
         XYChart.Series<String, Number> dataSeries7 = new XYChart.Series<>();
         autocorrelationTest.getAutocorrelationSeries().forEach((key, value) -> dataSeries7.getData().add(new XYChart.Data<>(String.valueOf(key), value)));
         diagramAutocorrelationBarChart.getData().add(dataSeries7);
@@ -1297,7 +1297,7 @@ public class TestGenController {
                     }
                     autocorrelationI.getAndIncrement();
                 });
-        double totalAutocorrelationWidth = 800 * diagramAutocorrelationBarChart.getData().size() * 15;
+        double totalAutocorrelationWidth = 800 * diagramAutocorrelationBarChart.getData().size() * 10;
         diagramAutocorrelationBarChart.setMinWidth(totalAutocorrelationWidth);
         diagramAutocorrelationBarChart.setPrefWidth(totalAutocorrelationWidth);
 
